@@ -3,6 +3,8 @@ import { FEED_PER_KILL, HUNGER_SOUL_BONUS } from "../content/hunger";
 import { spawnEnemy } from "../content/enemies";
 import { GameState, STAT_ORDER } from "../state/types";
 import { Decimal, D, ONE, ZERO } from "./decimal";
+import { hungerRatio } from "./hunger";
+import { digestMult } from "./reset";
 
 export interface CombatReadout {
   dps: Decimal;
@@ -12,12 +14,11 @@ export interface CombatReadout {
 }
 
 export function currentHungerRatio(state: GameState): number {
-  if (state.hungerMax <= 0) return 0;
-  return Math.min(1, Math.max(0, state.hunger / state.hungerMax));
+  return hungerRatio(state);
 }
 
-export function computeGlobalMult(_state: GameState): Decimal {
-  return ONE;
+export function computeGlobalMult(state: GameState): Decimal {
+  return digestMult(state.gluttonyLevel);
 }
 
 function greedMult(_state: GameState): Decimal {

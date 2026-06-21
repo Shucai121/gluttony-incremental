@@ -5,6 +5,8 @@ import { format } from "../engine/format";
 import { STAT_ORDER, StatId } from "../state/types";
 import { buyFrenzy, buyMaxFrenzy, buyMaxTraining, buyTraining, frenzyCost, trainingCost } from "../engine/training";
 import { combatReadout } from "../engine/combat";
+import { advanceZone, canAdvanceZone, maxSafeZone, zoneKillRequirement } from "../engine/zones";
+import { awaken, canAwaken, canDigest, digest } from "../engine/reset";
 
 export function StatusWindow() {
   useRender((state) => state.frame);
@@ -22,6 +24,8 @@ export function StatusWindow() {
         <Row label="Kills" value={format(state.totalKills)} />
         <Row label="Ticks" value={ticks.toLocaleString()} />
         <Row label="Hunger" value={`${state.hunger.toFixed(0)} / ${state.hungerMax}`} />
+        <Row label="Gluttony Lv" value={format(state.gluttonyLevel)} />
+        <Row label="Awakenings" value={format(state.awakenings)} />
         <button style={btn} onClick={() => hardReset()}>
           Hard Reset
         </button>
@@ -30,12 +34,30 @@ export function StatusWindow() {
       <section style={panel}>
         <h2 style={subtitle}>Enemy</h2>
         <Row label="Tier" value={`${state.current.tier}`} />
+        <Row label="Zone" value={`${state.zone} / ${state.maxZone}`} />
+        <Row label="Safe Depth" value={`${maxSafeZone(state)}`} />
         <Row label="HP" value={`${format(state.current.hp)} / ${format(state.current.maxHp)}`} />
         <div style={barOuter}>
           <div style={{ ...barInner, width: `${hpPct}%` }} />
         </div>
         <Row label="Soul Value" value={format(state.current.soulValue)} />
         <Row label="Absorb Rate" value={`${readout.absorbRate.mul(100).toFixed(2)}%`} />
+        <Row label="Next Zone" value={`${format(zoneKillRequirement(state.zone + 1))} kills`} />
+        <button style={btn} disabled={!canAdvanceZone(state)} onClick={() => advanceZone(state)}>
+          Advance Zone
+        </button>
+      </section>
+
+      <section style={panel}>
+        <h2 style={subtitle}>Gluttony</h2>
+        <Row label="Digest Ready" value={canDigest(state) ? "Yes" : "No"} />
+        <Row label="Awaken Ready" value={canAwaken(state) ? "Yes" : "No"} />
+        <button style={btn} disabled={!canDigest(state)} onClick={() => digest(state)}>
+          Digest
+        </button>
+        <button style={btn} disabled={!canAwaken(state)} onClick={() => awaken(state)}>
+          Awaken
+        </button>
       </section>
 
       <section style={panelWide}>
