@@ -1,4 +1,4 @@
-import { Decimal } from "./decimal";
+import { Decimal, D } from "./decimal";
 
 export type Notation = "standard" | "scientific" | "engineering";
 
@@ -9,7 +9,7 @@ export function format(value: Decimal, notation: Notation = "scientific", places
   if (value.lt(0)) return "-" + format(value.neg(), notation, places);
 
   // Small numbers: plain integers, or fixed decimals under 1000.
-  if (value.lt(1e6)) {
+  if (value.lt(D(1000000))) {
     const n = value.toNumber();
     if (n < 1000) return Number.isInteger(n) ? `${n}` : n.toFixed(places);
     return Math.floor(n).toLocaleString();
@@ -20,7 +20,7 @@ export function format(value: Decimal, notation: Notation = "scientific", places
 
   if (notation === "engineering") {
     const e3 = Math.floor(exp / 3) * 3;
-    const m = mantissa * Math.pow(10, exp - e3);
+    const m = mantissa * 10 ** (exp - e3);
     return `${m.toFixed(places)}e${e3}`;
   }
 
