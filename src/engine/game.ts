@@ -3,6 +3,7 @@ import { defaultState, deepMerge, migrate } from "../state/store";
 import { loadRaw, saveGame } from "./save";
 import { startLoop } from "./loop";
 import { tickCombat } from "./combat";
+import { tickHunger } from "./hunger";
 
 /** live, mutable game state. loop mutates directly (fast, no React churn). */
 export const game: { state: GameState; ticks: number } = {
@@ -14,6 +15,7 @@ let sinceSaveSec = 0;
 
 export function tick(deltaSec: number): void {
   game.ticks += 1;
+  tickHunger(game.state, deltaSec);
   tickCombat(game.state, deltaSec);
 
   sinceSaveSec += deltaSec;
