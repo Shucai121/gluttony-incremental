@@ -1,10 +1,20 @@
 import type { CSSProperties } from "react";
+import type { GreedForm } from "../content/greed";
 import { game, hardReset } from "../engine/game";
 import { useRender } from "../state/store";
 import { format } from "../engine/format";
 import { STAT_ORDER, StatId } from "../state/types";
 import { buyFrenzy, buyMaxFrenzy, buyMaxTraining, buyTraining, frenzyCost, trainingCost } from "../engine/training";
 import { combatReadout } from "../engine/combat";
+import {
+  advanceForm,
+  canAdvanceForm,
+  canTriggerBloodBurst,
+  currentGreedForm,
+  greedMult,
+  nextGreedForm,
+  triggerBloodBurst,
+} from "../engine/greed";
 import { advanceZone, canAdvanceZone, maxSafeZone, zoneKillRequirement } from "../engine/zones";
 import { awaken, canAwaken, canDigest, digest } from "../engine/reset";
 
@@ -12,6 +22,8 @@ export function StatusWindow() {
   useRender((state) => state.frame);
   const { state, ticks } = game;
   const readout = combatReadout(state);
+  const greedForm = currentGreedForm(state);
+  const nextGreed = nextGreedForm(state);
   const hpPct = Math.max(0, Math.min(100, state.current.hp.div(state.current.maxHp).mul(100).toNumber()));
 
   return (
@@ -55,13 +67,35 @@ export function StatusWindow() {
         <button style={btn} disabled={!canDigest(state)} onClick={() => digest(state)}>
           Digest
         </button>
-        <button style={btn} disabled={!canAwaken(state)} onClick={() => awaken(state)}>
-          Awaken
-        </button>
-      </section>
+      <button style={btn} disabled={!canAwaken(state)} onClick={() => awaken(state)}>
+        Awaken
+      </button>
+    </section>
 
-      <section style={panelWide}>
-        <h2 style={subtitle}>Training</h2>
+    <section style={panel}>
+      <h2 style={subtitle}>Greed</h2>
+      <Row label="Form" value={greedForm.name} />
+      <Row label="Damage" value={`x${format(greedMult(state))}`} />
+      <Row label="Blood Charge" value={format(state.greed.bloodCharge)} />
+      {nextGreed ? (
+        <>
+          <Row label="Next" value={nextGreed.name} />
+          <Row label="Soul Cost" value={format(nextGreed.unlockCost.souls)} />
+          <Row label="Blood Cost" value={greedStatCost(nextGreed)} />
+          <button style={btn} disabled={!canAdvanceForm(state)} onClick={() => advanceForm(state)}>
+            Advance Form
+          </button>
+        </>
+      ) : (
+        <Row label="Next" value="Max Form" />
+      )}
+      <button style={btn} disabled={!canTriggerBloodBurst(state)} onClick={() => triggerBloodBurst(state)}>
+        Blood Burst
+      </button>
+    </section>
+
+    <section style={panelWide}>
+      <h2 style={subtitle}>Training</h2>
         <div style={statGrid}>
           {STAT_ORDER.map((stat) => (
             <StatControl key={stat} stat={stat} />
@@ -84,6 +118,13 @@ export function StatusWindow() {
       </section>
     </main>
   );
+}
+
+function greedStatCost(form: GreedForm): string {
+  const costs = STAT_ORDER.filter((stat) => form.unlockCost.stats[stat].gt(0)).map(
+    (stat) => `${stat} ${format(form.unlockCost.stats[stat])}`,
+  );
+  return costs.length > 0 ? costs.join(" / ") : "None";
 }
 
 function StatControl({ stat }: { stat: StatId }) {
