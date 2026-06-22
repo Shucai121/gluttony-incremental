@@ -26,6 +26,6 @@ export const REVEAL_COPY: Record<Panel, string> = {
   foe: "",
   status: "",
   training: "『 Strength can be devoured. Spend. 』",
-  zone: "『 prey beneath you. Hunt deeper. 』",
-  gluttony: "『 skill deepens. Digest what you are. 』",
+  zone: "『 This prey is beneath you. Hunt deeper. 』",
+  gluttony: "『 The skill deepens. Digest what you are. 』",
 };
