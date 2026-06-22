@@ -21,6 +21,9 @@ export const TOOLTIPS: Record<string, TooltipCopy> = {
   "advance-zone": { title: "Advance Zone", body: "Descend to deadlier prey once you've culled enough of the current foe." },
   digest: { title: "Digest", body: "Consume your progress to raise Gluttony — a permanent feeding multiplier." },
   awaken: { title: "Awaken", body: "A deeper reset that awakens the skill further, compounding all you devour." },
+  "greed-form": { title: "Greed", body: "The sentient black sword. Each form it takes multiplies your damage." },
+  "advance-form": { title: "Advance Form", body: "Pay Souls and stats to reshape Greed into a deadlier form." },
+  "blood-burst": { title: "Blood Burst", body: "Spend Vitality to gorge Greed on blood — a burst of bonus damage for a short time." },
 };
 
 export function getTooltip(id: string): TooltipCopy | null {

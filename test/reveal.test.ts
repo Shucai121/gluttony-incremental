@@ -10,11 +10,12 @@ describe("isRevealed", () => {
     expect(isRevealed("status", s)).toBe(true);
   });
 
-  it("hides training, zone, gluttony on a fresh save", () => {
+  it("hides training, zone, gluttony, greed on a fresh save", () => {
     const s = defaultState();
     expect(isRevealed("training", s)).toBe(false);
     expect(isRevealed("zone", s)).toBe(false);
     expect(isRevealed("gluttony", s)).toBe(false);
+    expect(isRevealed("greed", s)).toBe(false);
   });
 
   it("reveals training after the first kill", () => {
@@ -31,6 +32,9 @@ describe("isRevealed", () => {
     expect(isRevealed("gluttony", s)).toBe(false);
     s.totalKills = D(50);
     expect(isRevealed("gluttony", s)).toBe(true);
+    expect(isRevealed("greed", s)).toBe(false);
+    s.totalKills = D(100);
+    expect(isRevealed("greed", s)).toBe(true);
   });
 
   it("exposes reveal copy for every panel", () => {

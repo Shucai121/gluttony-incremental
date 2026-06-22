@@ -1,9 +1,9 @@
 import { GameState } from "../state/types";
 import { REVEAL } from "../content/ui";
 
-export type Panel = "foe" | "status" | "training" | "zone" | "gluttony";
+export type Panel = "foe" | "status" | "training" | "zone" | "gluttony" | "greed";
 
-export const PANELS: readonly Panel[] = ["foe", "status", "training", "zone", "gluttony"];
+export const PANELS: readonly Panel[] = ["foe", "status", "training", "zone", "gluttony", "greed"];
 
 // Reads only monotonic state (totalKills) so panel never un-reveals after souls are spent.
 export function isRevealed(panel: Panel, state: GameState): boolean {
@@ -17,6 +17,8 @@ export function isRevealed(panel: Panel, state: GameState): boolean {
       return state.totalKills.gte(REVEAL.zoneKills);
     case "gluttony":
       return state.totalKills.gte(REVEAL.gluttonyKills);
+    case "greed":
+      return state.totalKills.gte(REVEAL.greedKills);
     default:
       return false;
   }
@@ -28,4 +30,5 @@ export const REVEAL_COPY: Record<Panel, string> = {
   training: "『 Strength can be devoured. Spend. 』",
   zone: "『 This prey is beneath you. Hunt deeper. 』",
   gluttony: "『 The skill deepens. Digest what you are. 』",
+  greed: "『 The black sword stirs. Greed hungers beside you. 』",
 };
