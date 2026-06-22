@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRender } from "../state/store";
 import { game } from "../engine/game";
 import { format } from "../engine/format";
@@ -27,15 +27,28 @@ export function AppShell() {
   useRender((s) => s.frame); // re-render each tick to sample live game state
   const prefs = useUiPrefs();
   const state = game.state;
+  const [toasts, setToasts] = useState<string[]>([]);
+  const toastedRef = useRef<Set<string>>(new Set());
 
-  // Fire a one-time toast the first time a panel clears its reveal threshold.
-  const newlyRevealed = PANELS.filter(
+  // The first time a panel clears its reveal threshold, fire a one-time toast
+  // that lingers on its own timer, independent of the persisted seen-set
+  // (which updates instantly and would otherwise unmount the toast next frame).
+  const pendingReveals = PANELS.filter(
     (p) => REVEAL_COPY[p] !== "" && isRevealed(p, state) && !prefs.seenReveals.includes(p),
   );
   useEffect(() => {
-    for (const p of newlyRevealed) prefs.markRevealSeen(p);
+    const fresh = pendingReveals.filter((p) => !toastedRef.current.has(p));
+    if (fresh.length === 0) return;
+    for (const p of fresh) {
+      toastedRef.current.add(p);
+      prefs.markRevealSeen(p);
+    }
+    const messages = fresh.map((p) => REVEAL_COPY[p]);
+    setToasts((cur) => [...cur, ...messages]);
+    const timer = setTimeout(() => setToasts((cur) => cur.slice(messages.length)), 4000);
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newlyRevealed.join(",")]);
+  }, [pendingReveals.join(",")]);
 
   return (
     <div className="app-shell">
@@ -68,15 +81,15 @@ export function AppShell() {
 
       {PANELS.map((p) => {
         if (!isRevealed(p, state)) return null;
-        const Panel = PANEL_COMPONENTS[p];
+        const Comp = PANEL_COMPONENTS[p];
         return (
           <div className="reveal" key={p}>
-            <Panel />
+            <Comp />
           </div>
         );
       })}
 
-      <ToastHost messages={newlyRevealed.map((p) => REVEAL_COPY[p])} />
+      <ToastHost messages={toasts} />
     </div>
   );
 }
