@@ -1,0 +1,41 @@
+import { describe, it, expect } from "vitest";
+import { defaultState } from "../src/state/store";
+import { D } from "../src/engine/decimal";
+import { isRevealed, PANELS, REVEAL_COPY } from "../src/ui/reveal";
+
+describe("isRevealed", () => {
+  it("always reveals foe and status on a fresh save", () => {
+    const s = defaultState();
+    expect(isRevealed("foe", s)).toBe(true);
+    expect(isRevealed("status", s)).toBe(true);
+  });
+
+  it("hides training, zone, gluttony on a fresh save", () => {
+    const s = defaultState();
+    expect(isRevealed("training", s)).toBe(false);
+    expect(isRevealed("zone", s)).toBe(false);
+    expect(isRevealed("gluttony", s)).toBe(false);
+  });
+
+  it("reveals training after the first kill", () => {
+    const s = defaultState();
+    s.totalKills = D(1);
+    expect(isRevealed("training", s)).toBe(true);
+    expect(isRevealed("zone", s)).toBe(false);
+  });
+
+  it("reveals zone then gluttony as kills climb", () => {
+    const s = defaultState();
+    s.totalKills = D(10);
+    expect(isRevealed("zone", s)).toBe(true);
+    expect(isRevealed("gluttony", s)).toBe(false);
+    s.totalKills = D(50);
+    expect(isRevealed("gluttony", s)).toBe(true);
+  });
+
+  it("exposes reveal copy for every panel", () => {
+    for (const p of PANELS) {
+      expect(typeof REVEAL_COPY[p]).toBe("string");
+    }
+  });
+});

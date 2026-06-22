@@ -1,9 +1,5 @@
-import { StatusWindow } from "./ui/StatusWindow";
+import { AppShell } from "./ui/AppShell";
 
 export function App() {
-  return (
-    <div style={{ display: "flex", justifyContent: "center", padding: "10vh 16px" }}>
-      <StatusWindow />
-    </div>
-  );
+  return <AppShell />;
 }
