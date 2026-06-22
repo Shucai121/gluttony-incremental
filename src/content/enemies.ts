@@ -1,16 +1,38 @@
 import { Decimal, D } from "../engine/decimal";
 import { EnemyState, StatId, STAT_ORDER } from "../state/types";
 
-/**
- * Phase 1 placeholder. Phase 2 replaces the body with the geometric scaling in SPEC §6:
- *   maxHp     = 1e1 * 1.15^totalKills * 8^zone
- *   soulValue = 1e0 * 1.12^totalKills * 5^zone
- *   stats[s]  = 1e0 * 1.13^totalKills * 6^zone
- * and rolls skillDropId from the zone's drop table.
- */
-export function spawnEnemy(zone: number, _totalKills: Decimal): EnemyState {
+const ENEMY_HP_BASE = "1e1";
+const ENEMY_HP_KILL_MULT = "1.15";
+const ENEMY_HP_ZONE_MULT = "8";
+const ENEMY_SOUL_BASE = "1e0";
+const ENEMY_SOUL_KILL_MULT = "1.12";
+const ENEMY_SOUL_ZONE_MULT = "5";
+const ENEMY_STAT_BASE = "1e0";
+const ENEMY_STAT_KILL_MULT = "1.13";
+const ENEMY_STAT_ZONE_MULT = "6";
+
+export function spawnEnemy(zone: number, totalKills: Decimal): EnemyState {
+  const killPower = D(totalKills);
+  const zonePower = D(zone);
+  const maxHp = D(ENEMY_HP_BASE).mul(D(ENEMY_HP_KILL_MULT).pow(killPower)).mul(D(ENEMY_HP_ZONE_MULT).pow(zonePower));
+  const soulValue = D(ENEMY_SOUL_BASE)
+    .mul(D(ENEMY_SOUL_KILL_MULT).pow(killPower))
+    .mul(D(ENEMY_SOUL_ZONE_MULT).pow(zonePower));
+  const statValue = D(ENEMY_STAT_BASE)
+    .mul(D(ENEMY_STAT_KILL_MULT).pow(killPower))
+    .mul(D(ENEMY_STAT_ZONE_MULT).pow(zonePower));
   const stats = {} as Record<StatId, Decimal>;
-  for (const s of STAT_ORDER) stats[s] = D(1);
-  const maxHp = D(10);
-  return { hp: maxHp, maxHp, soulValue: D(1), tier: zone, stats, skillDropId: null };
+
+  for (const stat of STAT_ORDER) {
+    stats[stat] = statValue;
+  }
+
+  return {
+    hp: maxHp,
+    maxHp,
+    soulValue,
+    tier: zone,
+    stats,
+    skillDropId: null,
+  };
 }

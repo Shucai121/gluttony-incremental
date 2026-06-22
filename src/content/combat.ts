@@ -1,0 +1,10 @@
+export const CRIT_PER_DEX = "0.01";
+export const AGI_SCALE = "100";
+export const FRENZY_PER_BUY = "1.1";
+export const FRENZY_BASE_COST = "1e3";
+export const FRENZY_COST_MULT = "1.5";
+export const HUNGER_DPS_BONUS = "0.5";
+export const MND_SCALE = "1000";
+export const BASE_ABSORB = "0.02";
+export const ABSORB_AWAKENING_MULT = "1.5";
+export const MAX_KILLS_PER_TICK = 1000;

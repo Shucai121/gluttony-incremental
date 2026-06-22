@@ -2,8 +2,10 @@ import { GameState } from "../state/types";
 import { defaultState, deepMerge, migrate } from "../state/store";
 import { loadRaw, saveGame } from "./save";
 import { startLoop } from "./loop";
+import { tickCombat } from "./combat";
+import { tickHunger } from "./hunger";
 
-/** The live, mutable game state. The loop mutates this directly (fast, no React churn). */
+/** live, mutable game state. loop mutates directly (fast, no React churn). */
 export const game: { state: GameState; ticks: number } = {
   state: deepMerge(defaultState(), migrate(loadRaw() ?? {})),
   ticks: 0,
@@ -11,10 +13,10 @@ export const game: { state: GameState; ticks: number } = {
 
 let sinceSaveSec = 0;
 
-function tick(deltaSec: number): void {
+export function tick(deltaSec: number): void {
   game.ticks += 1;
-
-  // Phase 2+: combat / devour / hunger / training updates go here.
+  tickHunger(game.state, deltaSec);
+  tickCombat(game.state, deltaSec);
 
   sinceSaveSec += deltaSec;
   if (sinceSaveSec >= game.state.settings.autosaveSec) {
@@ -24,7 +26,7 @@ function tick(deltaSec: number): void {
   }
 }
 
-/** Start the fixed-timestep loop. `onFrame` is called once per logical tick (for UI sampling). */
+/** Start fixed-timestep loop. `onFrame` called once per logical tick (for UI sampling). */
 export function startGame(onFrame: () => void): () => void {
   return startLoop((deltaSec) => {
     tick(deltaSec);
@@ -35,5 +37,6 @@ export function startGame(onFrame: () => void): () => void {
 export function hardReset(): void {
   game.state = defaultState();
   game.ticks = 0;
+  sinceSaveSec = 0;
   saveGame(game.state);
 }

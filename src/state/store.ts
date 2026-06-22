@@ -1,14 +1,18 @@
 import { create } from "zustand";
-import { Decimal, ZERO } from "../engine/decimal";
+import { Decimal, D, ZERO } from "../engine/decimal";
 import { GameState, StatId, STAT_ORDER, StatState } from "./types";
 import { spawnEnemy } from "../content/enemies";
+import { HUNGER_MAX } from "../content/hunger";
+import { INITIAL_STATS } from "../content/stats";
 
 export const SAVE_VERSION = 1;
 
 function emptyStats(): Record<StatId, StatState> {
-  const o = {} as Record<StatId, StatState>;
-  for (const s of STAT_ORDER) o[s] = { value: ZERO, trained: ZERO };
-  return o;
+  const stats = {} as Record<StatId, StatState>;
+  for (const stat of STAT_ORDER) {
+    stats[stat] = { value: D(INITIAL_STATS[stat]), trained: ZERO };
+  }
+  return stats;
 }
 
 export function defaultState(): GameState {
@@ -23,7 +27,7 @@ export function defaultState(): GameState {
     totalKills: ZERO,
 
     hunger: 0,
-    hungerMax: 100,
+    hungerMax: HUNGER_MAX,
     zone: 0,
     maxZone: 0,
     gluttonyLevel: ZERO,
@@ -56,30 +60,39 @@ export function defaultState(): GameState {
 }
 
 /** Transform an older save forward one version at a time. */
-export function migrate(raw: any): any {
+export function migrate(raw: unknown): unknown {
   if (!raw || typeof raw !== "object") return {};
-  if (typeof raw.version === "number" && raw.version > SAVE_VERSION) return {}; // newer save -> fall back
-  // Future: switch on raw.version and apply step-by-step upgrades here.
+  const versioned = raw as { version?: number };
+  if (typeof versioned.version === "number" && versioned.version > SAVE_VERSION) return {};
   return raw;
 }
 
-/** Deep-merge a (revived) save over a fresh default so missing fields get defaults. */
-export function deepMerge<T>(base: T, over: any): T {
-  if (over === null || over === undefined) return base;
-  if (base instanceof Decimal) return (over instanceof Decimal ? over : base) as T;
-  if (Array.isArray(base)) return (Array.isArray(over) ? over : base) as T;
-  if (typeof base === "object") {
-    const out: any = { ...(base as any) };
-    for (const k in over) {
-      out[k] = k in (base as any) ? deepMerge((base as any)[k], over[k]) : over[k];
+/** Deep-merge (revived) save over default so missing fields get defaults. */
+export function deepMerge<T>(base: T, over: unknown): T {
+  if (!over || typeof over !== "object") return base;
+  const output: any = Array.isArray(base) ? [...base] : { ...(base as any) };
+  for (const key of Object.keys(over)) {
+    const value = (over as any)[key];
+    const baseValue = (base as any)[key];
+    if (
+      value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      !(value instanceof Decimal) &&
+      baseValue &&
+      typeof baseValue === "object" &&
+      !Array.isArray(baseValue)
+    ) {
+      output[key] = deepMerge(baseValue, value);
+    } else {
+      output[key] = value;
     }
-    return out as T;
   }
-  return (over ?? base) as T;
+  return output;
 }
 
-/** Tiny store whose only job is to trigger a React re-render each tick. */
+/** Tiny store whose only job is to trigger React re-render each tick. */
 export const useRender = create<{ frame: number; bump: () => void }>((set) => ({
   frame: 0,
-  bump: () => set((s) => ({ frame: s.frame + 1 })),
+  bump: () => set((state) => ({ frame: state.frame + 1 })),
 }));
