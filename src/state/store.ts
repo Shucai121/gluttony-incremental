@@ -5,7 +5,7 @@ import { spawnEnemy } from "../content/enemies";
 import { HUNGER_MAX } from "../content/hunger";
 import { INITIAL_STATS } from "../content/stats";
 
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 function emptyStats(): Record<StatId, StatState> {
   const stats = {} as Record<StatId, StatState>;
@@ -64,7 +64,11 @@ export function migrate(raw: unknown): unknown {
   if (!raw || typeof raw !== "object") return {};
   const versioned = raw as { version?: number };
   if (typeof versioned.version === "number" && versioned.version > SAVE_VERSION) return {};
-  return raw;
+  let out: any = { ...raw };
+  // 1 -> 2 (Phase 7): sins/mortalSins/sinTree already exist in defaultState, so
+  // deepMerge fills any missing fields; this step only advances the version stamp.
+  if (out.version === 1) out = { ...out, version: 2 };
+  return out;
 }
 
 /** Deep-merge (revived) save over default so missing fields get defaults. */

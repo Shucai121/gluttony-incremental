@@ -16,6 +16,8 @@ import { FrenzyPanel } from "./FrenzyPanel";
 import { SkillLibraryPanel } from "./SkillLibraryPanel";
 import { AppraisalPanel } from "./AppraisalPanel";
 import { SinTrialPanel } from "./SinTrialPanel";
+import { MortalSinPanel } from "./MortalSinPanel";
+import { SinTreePanel } from "./SinTreePanel";
 import { WelcomeModal } from "./WelcomeModal";
 import { ObjectiveNudge } from "./ObjectiveNudge";
 import { ToastHost } from "./SkillToast";
@@ -31,6 +33,8 @@ const PANEL_COMPONENTS: Record<Panel, () => JSX.Element> = {
   skills: SkillLibraryPanel,
   appraisal: AppraisalPanel,
   trials: SinTrialPanel,
+  mortalsin: MortalSinPanel,
+  sintree: SinTreePanel,
 };
 
 export function AppShell() {

@@ -1,6 +1,7 @@
 import { GameState } from "../state/types";
 import { REVEAL } from "../content/ui";
 import { ZERO } from "../engine/decimal";
+import { MORTAL_SIN_RANK } from "../content/mortalSin";
 
 export type Panel =
   | "foe"
@@ -12,7 +13,9 @@ export type Panel =
   | "frenzy"
   | "skills"
   | "appraisal"
-  | "trials";
+  | "trials"
+  | "mortalsin"
+  | "sintree";
 
 export const PANELS: readonly Panel[] = [
   "foe",
@@ -25,6 +28,8 @@ export const PANELS: readonly Panel[] = [
   "skills",
   "appraisal",
   "trials",
+  "mortalsin",
+  "sintree",
 ];
 
 // Reads only monotonic state (totalKills) so panel never un-reveals after souls are spent.
@@ -48,6 +53,10 @@ export function isRevealed(panel: Panel, state: GameState): boolean {
     case "appraisal":
     case "trials":
       return state.sinEssence.gt(ZERO);
+    case "mortalsin":
+      return state.devourerRank >= MORTAL_SIN_RANK || state.mortalSins.gt(ZERO);
+    case "sintree":
+      return state.mortalSins.gt(ZERO) || state.sins.gt(ZERO);
     default:
       return false;
   }
@@ -64,4 +73,6 @@ export const REVEAL_COPY: Record<Panel, string> = {
   skills: "『 A skill tears free of the devoured. It is yours now. 』",
   appraisal: "『 Your eye sharpens. Read the prey before you feast. 』",
   trials: "『 The Deadly Sins beckon. Prove your hunger against them. 』",
+  mortalsin: "『 Rank S. You are ready to become something far worse. 』",
+  sintree: "『 Another voice wakes within. Choose what you will become. 』",
 };

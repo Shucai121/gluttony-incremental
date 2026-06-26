@@ -83,3 +83,35 @@ describe("phase 6 panel reveal", () => {
     expect(isRevealed("trials", state)).toBe(true);
   });
 });
+
+describe("phase 7 panel reveal", () => {
+  it("hides mortalsin until rank S is reached", () => {
+    const state = defaultState();
+    expect(isRevealed("mortalsin", state)).toBe(false);
+    state.devourerRank = 4;
+    expect(isRevealed("mortalsin", state)).toBe(false);
+    state.devourerRank = 5;
+    expect(isRevealed("mortalsin", state)).toBe(true);
+  });
+
+  it("keeps mortalsin revealed after first awakening even if rank resets", () => {
+    const state = defaultState();
+    state.devourerRank = 0;
+    state.mortalSins = D(1);
+    expect(isRevealed("mortalsin", state)).toBe(true);
+  });
+
+  it("hides sintree until a Mortal Sin awakening or a Sin is held", () => {
+    const state = defaultState();
+    expect(isRevealed("sintree", state)).toBe(false);
+    state.sins = D(1);
+    expect(isRevealed("sintree", state)).toBe(true);
+  });
+
+  it("reveals sintree from the first awakening even at zero Sins", () => {
+    const state = defaultState();
+    state.sins = ZERO;
+    state.mortalSins = D(1);
+    expect(isRevealed("sintree", state)).toBe(true);
+  });
+});
