@@ -8,6 +8,8 @@ import { hungerRatio } from "./hunger";
 import { digestMult } from "./reset";
 import { rankMult } from "./ranks";
 import { essenceAbsorptionMult, essenceShopMult } from "./essenceShop";
+import { dropSkill, skillMult } from "./skills";
+import { activeModifiers } from "./modifiers";
 
 export interface CombatReadout {
   dps: Decimal;
@@ -26,10 +28,6 @@ export function computeGlobalMult(state: GameState): Decimal {
     .mul(essenceShopMult(state));
 }
 
-function skillMult(_state: GameState): Decimal {
-  return ONE;
-}
-
 export function computeDps(state: GameState): Decimal {
   const str = state.stats.STR.value;
   const mag = state.stats.MAG.value;
@@ -46,14 +44,16 @@ export function computeDps(state: GameState): Decimal {
     .mul(greedMult(state))
     .mul(skillMult(state))
     .mul(hungerCombatMult)
-    .mul(computeGlobalMult(state));
+    .mul(computeGlobalMult(state))
+    .mul(activeModifiers(state).dpsMult);
 }
 
 export function absorbRate(state: GameState): Decimal {
   return D(BASE_ABSORB)
     .mul(D(ABSORB_AWAKENING_MULT).pow(state.awakenings))
     .mul(ONE.add(state.stats.MND.value.div(MND_SCALE)))
-    .mul(essenceAbsorptionMult(state));
+    .mul(essenceAbsorptionMult(state))
+    .mul(activeModifiers(state).absorbMult);
 }
 
 export function soulsPerKill(state: GameState): Decimal {
@@ -79,6 +79,8 @@ export function killEnemy(state: GameState): void {
   for (const stat of STAT_ORDER) {
     state.stats[stat].value = state.stats[stat].value.add(current.stats[stat].mul(rate));
   }
+
+  if (current.skillDropId) dropSkill(state, current.skillDropId);
 
   state.hunger = Math.max(0, state.hunger - FEED_PER_KILL);
   state.totalKills = state.totalKills.add(ONE);

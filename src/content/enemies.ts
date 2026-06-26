@@ -1,5 +1,6 @@
 import { Decimal, D } from "../engine/decimal";
 import { EnemyState, StatId, STAT_ORDER } from "../state/types";
+import { skillDropForZone } from "./skills";
 
 const ENEMY_HP_BASE = "1e1";
 const ENEMY_HP_KILL_MULT = "1.15";
@@ -33,6 +34,6 @@ export function spawnEnemy(zone: number, totalKills: Decimal): EnemyState {
     soulValue,
     tier: zone,
     stats,
-    skillDropId: null,
+    skillDropId: skillDropForZone(zone),
   };
 }

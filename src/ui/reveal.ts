@@ -2,9 +2,30 @@ import { GameState } from "../state/types";
 import { REVEAL } from "../content/ui";
 import { ZERO } from "../engine/decimal";
 
-export type Panel = "foe" | "status" | "training" | "zone" | "gluttony" | "greed" | "frenzy";
+export type Panel =
+  | "foe"
+  | "status"
+  | "training"
+  | "zone"
+  | "gluttony"
+  | "greed"
+  | "frenzy"
+  | "skills"
+  | "appraisal"
+  | "trials";
 
-export const PANELS: readonly Panel[] = ["foe", "status", "training", "zone", "gluttony", "greed", "frenzy"];
+export const PANELS: readonly Panel[] = [
+  "foe",
+  "status",
+  "training",
+  "zone",
+  "gluttony",
+  "greed",
+  "frenzy",
+  "skills",
+  "appraisal",
+  "trials",
+];
 
 // Reads only monotonic state (totalKills) so panel never un-reveals after souls are spent.
 export function isRevealed(panel: Panel, state: GameState): boolean {
@@ -22,6 +43,11 @@ export function isRevealed(panel: Panel, state: GameState): boolean {
       return state.totalKills.gte(REVEAL.greedKills);
     case "frenzy":
       return state.hunger >= state.hungerMax || state.sinEssence.gt(ZERO);
+    case "skills":
+      return Object.keys(state.skills).length > 0;
+    case "appraisal":
+    case "trials":
+      return state.sinEssence.gt(ZERO);
     default:
       return false;
   }
@@ -35,4 +61,7 @@ export const REVEAL_COPY: Record<Panel, string> = {
   gluttony: "『 The skill deepens. Digest what you are. 』",
   greed: "『 The black sword stirs. Greed hungers beside you. 』",
   frenzy: "『 You are gorged past bearing. Let the Frenzy devour it all. 』",
+  skills: "『 A skill tears free of the devoured. It is yours now. 』",
+  appraisal: "『 Your eye sharpens. Read the prey before you feast. 』",
+  trials: "『 The Deadly Sins beckon. Prove your hunger against them. 』",
 };

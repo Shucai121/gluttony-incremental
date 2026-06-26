@@ -65,3 +65,21 @@ describe("frenzy panel reveal", () => {
     expect(isRevealed("frenzy", state)).toBe(true);
   });
 });
+
+describe("phase 6 panel reveal", () => {
+  it("hides skills until one is owned, then reveals it", () => {
+    const state = defaultState();
+    expect(isRevealed("skills", state)).toBe(false);
+    state.skills["rending-claw"] = { level: 1, equipped: false };
+    expect(isRevealed("skills", state)).toBe(true);
+  });
+
+  it("reveals appraisal and trials once Sin Essence has been earned", () => {
+    const state = defaultState();
+    expect(isRevealed("appraisal", state)).toBe(false);
+    expect(isRevealed("trials", state)).toBe(false);
+    state.sinEssence = D(1);
+    expect(isRevealed("appraisal", state)).toBe(true);
+    expect(isRevealed("trials", state)).toBe(true);
+  });
+});

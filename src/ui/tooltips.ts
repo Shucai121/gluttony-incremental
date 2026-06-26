@@ -29,6 +29,18 @@ export const TOOLTIPS: Record<string, TooltipCopy> = {
   "devourer-rank": { title: "Devourer Rank", body: "Rises with total Sin Essence (E→S). Each rank multiplies all damage and souls." },
   "essence-shop": { title: "Sin Essence Shop", body: "Permanent upgrades bought with Sin Essence. They persist through every Feeding Frenzy." },
   instincts: { title: "Greed's Instincts", body: "Autobuyers unlocked with Sin Essence — train, dive, and digest on their own. Toggle each on or off." },
+  "skill-library": { title: "Skill Library", body: "Skills devoured from foes. Re-devour to level them; equip up to your loadout for a damage bonus." },
+  appraisal: { title: "Appraisal", body: "Spend Sin Essence to pierce deeper zones (Deep Sight) and read your prey (Predator's Eye)." },
+  "appraisal-deep-sight": { title: "Deep Sight", body: "Each level unlocks more zones to descend into — stronger prey, richer absorption." },
+  "appraisal-predator-eye": { title: "Predator's Eye", body: "Reveals enemy stats and drops before the kill." },
+  "sin-trials": { title: "Sin Trials", body: "Face a Deadly Sin under its constraint. Clear it for a permanent, build-defining Sin Skill." },
+  "sin-wrath": { title: "Wrath", body: "Hunger rises twice as fast. Reward: Wrath Ember." },
+  "sin-sloth": { title: "Sloth", body: "Your damage is halved. Reward: Sloth Shroud." },
+  "sin-lust": { title: "Lust", body: "Absorption is halved. Reward: Lust Charm." },
+  "sin-pride": { title: "Pride", body: "Greed forms are locked. Reward: Pride Crown." },
+  "sin-envy": { title: "Envy", body: "Training is forbidden. Reward: Envy Mirror." },
+  "sin-greed": { title: "Greed", body: "Appraisal is sealed. Reward: Greed Edge." },
+  "sin-gluttony": { title: "Gluttony", body: "Hunger races and damage falters. Reward: Glutton's Maw." },
 };
 
 export function getTooltip(id: string): TooltipCopy | null {

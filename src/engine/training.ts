@@ -2,6 +2,7 @@ import { FRENZY_BASE_COST, FRENZY_COST_MULT } from "../content/combat";
 import { TRAINING, TRAINING_GAIN } from "../content/stats";
 import { GameState, StatId } from "../state/types";
 import { Decimal, DecimalSource, D, ONE, ZERO, geometricCost } from "./decimal";
+import { activeModifiers } from "./modifiers";
 
 function geometricBatchCost(currentCost: Decimal, mult: Decimal, quantity: Decimal): Decimal {
   if (quantity.lte(ZERO)) return ZERO;
@@ -37,6 +38,7 @@ export function trainingBatchCost(state: GameState, stat: StatId, quantity: Deci
 }
 
 export function buyTraining(state: GameState, stat: StatId): boolean {
+  if (activeModifiers(state).trainingLocked) return false;
   const cost = trainingCost(state, stat);
   if (state.souls.lt(cost)) return false;
 
@@ -47,6 +49,7 @@ export function buyTraining(state: GameState, stat: StatId): boolean {
 }
 
 export function buyMaxTraining(state: GameState, stat: StatId): Decimal {
+  if (activeModifiers(state).trainingLocked) return ZERO;
   const quantity = maxAffordable(trainingCost(state, stat), D(TRAINING[stat].trainCostMult), state.souls);
   if (quantity.lte(ZERO)) return ZERO;
 

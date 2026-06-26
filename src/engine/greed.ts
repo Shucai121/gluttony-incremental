@@ -1,6 +1,7 @@
 import { GREED_BURST, GREED_FORMS, GreedForm } from "../content/greed";
 import { GameState, STAT_ORDER } from "../state/types";
 import { Decimal, ZERO } from "./decimal";
+import { activeModifiers } from "./modifiers";
 
 export function currentGreedForm(state: GameState): GreedForm {
   return GREED_FORMS[state.greed.form] ?? GREED_FORMS[0];
@@ -16,6 +17,7 @@ export function greedMult(state: GameState): Decimal {
 }
 
 export function canAdvanceForm(state: GameState): boolean {
+  if (activeModifiers(state).greedLocked) return false;
   const next = nextGreedForm(state);
   if (!next) return false;
   if (state.souls.lt(next.unlockCost.souls)) return false;
