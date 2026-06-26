@@ -10,25 +10,43 @@ Gluttony** engine: grow by **devouring what you kill** (stealing stats + skills)
 - **`SPEC.md`** — binding engineering contracts (state shape, reset-scope table, formulas,
   balance constants). **SPEC wins on any conflict with PLAN.**
 
-## Scaffold status
-This repo already contains a compiling **Phase 1 foundation** (build config + the shared-contract
-engine files + canonical state + a placeholder Status Window + tests). Phases 2+ build on it.
+## Status — feature-complete (Phases 1–10)
+The full game loop is implemented and tested. Numbers use **break_eternity.js**. The prestige
+stack, top to bottom:
+
+1. **Digest / Awaken** — in-run resets that raise the Gluttony multiplier.
+2. **Feeding Frenzy** — full reset for **Sin Essence** → Devourer Rank (E→S), an essence shop,
+   and Greed's-Instinct autobuyers.
+3. **Sin Trials / Skill Library / Appraisal** — constrained sandboxes for build-defining Sin
+   Skills; absorbed skills; zone-depth gating.
+4. **Mortal Sin Awakening** — reset Phases 2–5 for **Sins** and the "Other Voice" tree.
+5. **Transcendence (God's Domain)** — reset everything for **Divinity**, permanent **Domain
+   Perks**, plus **Achievements** (permanent multipliers) and **Titles** (cosmetic).
+
+A status-window UI ties it together: an `[Appraisal]` notification feed, a character sheet, a
+danger-pulsing Hunger bar, prestige flashes, and a settings panel (notation, autosave, offline
+progress, hard reset). **Offline progress** catches up the time the tab was closed (capped 8h).
 
 ## Run
 ```bash
-npm install      # if break_infinity.js fails to resolve, run: npm i break_infinity.js@latest
-npm run test     # vitest — should be green
-npm run dev      # http://localhost:5173 — shows the Status Window, ticks incrementing
+npm install
+npm run test     # vitest — full suite green
+npm run dev      # http://localhost:5173
 npm run build    # typecheck (tsc) + production build to dist/
 ```
 
-## What's wired in the scaffold
-- `src/engine/decimal.ts` · `loop.ts` · `save.ts` — **shared contracts; copy/extend, don't rewrite.**
-- `src/engine/format.ts` — number formatter (scientific / engineering).
-- `src/state/types.ts` — the canonical `GameState` (target shape for all phases).
-- `src/state/store.ts` — `defaultState()`, `migrate()`, `deepMerge()`, and the render store.
-- `src/engine/game.ts` — the live state + fixed-timestep tick + autosave. **Phase 2 adds
-  combat/devour/hunger inside `tick()`.**
-- `src/content/enemies.ts` — placeholder `spawnEnemy()` (Phase 2 swaps in SPEC §6 scaling).
-- `src/ui/StatusWindow.tsx` — placeholder status panel.
-- `test/scaffold.test.ts` — proves big-number math, formatting, and save round-trip.
+## Verification & balance
+- `test/simRun.test.ts` runs the engine unattended through the Digest → Feeding Frenzy loop.
+- `test/offline.test.ts` covers bounded offline catch-up.
+- **Balance is a conservative first pass.** Early pacing lands in the "minutes to first Frenzy"
+  target, but deep-game pacing (Mortal Sin, Transcendence) and overall feel are **playtest-pending**
+  — tune constants in `src/content/*` only. This was verified headlessly (build + types + unit
+  tests); a real browser walkthrough is the remaining sign-off.
+
+## Architecture contracts (don't rewrite)
+- `src/engine/decimal.ts` · `loop.ts` · `save.ts` — shared primitives.
+- `src/engine/step.ts` — `stepEngine()`, the single per-tick sequence shared by the live loop,
+  offline catch-up, and the sim.
+- `src/engine/combat.ts` — the **single source** for `computeGlobalMult` / `computeDps`; every
+  multiplier folds in here, never scattered.
+- `src/state/types.ts` / `store.ts` — canonical `GameState`, `defaultState`, `migrate`, `deepMerge`.
