@@ -13,7 +13,7 @@ function maxAffordable(currentCost: Decimal, mult: Decimal, available: Decimal):
   if (available.lt(currentCost)) return ZERO;
 
   const estimateSource = available.mul(mult.sub(ONE)).div(currentCost).add(ONE);
-  const rawEstimate = estimateSource.log10() / mult.log10();
+  const rawEstimate = estimateSource.log10().div(mult.log10()).toNumber();
   let quantity = D(Math.floor(Math.max(0, rawEstimate)));
 
   while (quantity.gt(ZERO) && geometricBatchCost(currentCost, mult, quantity).gt(available)) {
