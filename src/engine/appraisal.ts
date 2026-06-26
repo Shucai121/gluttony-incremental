@@ -6,6 +6,7 @@ import {
 } from "../content/appraisal";
 import { GameState } from "../state/types";
 import { Decimal, ZERO, geometricCost } from "./decimal";
+import { activeModifiers } from "./modifiers";
 
 export function appraisalLevel(state: GameState, id: string): number {
   return state.appraisal[id] ?? 0;
@@ -20,6 +21,7 @@ export function appraisalCost(state: GameState, id: string): Decimal {
 export function canBuyAppraisal(state: GameState, id: string): boolean {
   const node = appraisalNodeById(id);
   if (!node) return false;
+  if (activeModifiers(state).appraisalLocked) return false;
   if (node.maxLevel !== null && appraisalLevel(state, id) >= node.maxLevel) return false;
   return state.sinEssence.gte(appraisalCost(state, id));
 }

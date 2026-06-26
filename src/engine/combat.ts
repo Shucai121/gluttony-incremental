@@ -9,6 +9,7 @@ import { digestMult } from "./reset";
 import { rankMult } from "./ranks";
 import { essenceAbsorptionMult, essenceShopMult } from "./essenceShop";
 import { dropSkill, skillMult } from "./skills";
+import { activeModifiers } from "./modifiers";
 
 export interface CombatReadout {
   dps: Decimal;
@@ -43,14 +44,16 @@ export function computeDps(state: GameState): Decimal {
     .mul(greedMult(state))
     .mul(skillMult(state))
     .mul(hungerCombatMult)
-    .mul(computeGlobalMult(state));
+    .mul(computeGlobalMult(state))
+    .mul(activeModifiers(state).dpsMult);
 }
 
 export function absorbRate(state: GameState): Decimal {
   return D(BASE_ABSORB)
     .mul(D(ABSORB_AWAKENING_MULT).pow(state.awakenings))
     .mul(ONE.add(state.stats.MND.value.div(MND_SCALE)))
-    .mul(essenceAbsorptionMult(state));
+    .mul(essenceAbsorptionMult(state))
+    .mul(activeModifiers(state).absorbMult);
 }
 
 export function soulsPerKill(state: GameState): Decimal {
