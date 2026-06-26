@@ -24,6 +24,11 @@ export const TOOLTIPS: Record<string, TooltipCopy> = {
   "greed-form": { title: "Greed", body: "The sentient black sword. Each form it takes multiplies your damage." },
   "advance-form": { title: "Advance Form", body: "Pay Souls and stats to reshape Greed into a deadlier form." },
   "blood-burst": { title: "Blood Burst", body: "Spend Vitality to gorge Greed on blood — a burst of bonus damage for a short time." },
+  "feeding-frenzy": { title: "Feeding Frenzy", body: "At maximum Hunger, Gluttony devours everything — your run resets for Sin Essence." },
+  "sin-essence": { title: "Sin Essence", body: "The residue of a devoured run. Spend it to raise your Rank, buy upgrades, and unlock instincts." },
+  "devourer-rank": { title: "Devourer Rank", body: "Rises with total Sin Essence (E→S). Each rank multiplies all damage and souls." },
+  "essence-shop": { title: "Sin Essence Shop", body: "Permanent upgrades bought with Sin Essence. They persist through every Feeding Frenzy." },
+  instincts: { title: "Greed's Instincts", body: "Autobuyers unlocked with Sin Essence — train, dive, and digest on their own. Toggle each on or off." },
 };
 
 export function getTooltip(id: string): TooltipCopy | null {

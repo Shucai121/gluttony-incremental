@@ -3,6 +3,9 @@ import { spawnEnemy } from "../content/enemies";
 import { GameState, STAT_ORDER } from "../state/types";
 import { defaultState } from "../state/store";
 import { Decimal, D, ONE, ZERO } from "./decimal";
+import { sinEssenceGain } from "./prestige";
+import { updateDevourerRank } from "./ranks";
+import { hungerRatio } from "./hunger";
 
 function bestStatValue(state: GameState): Decimal {
   let best = ZERO;
@@ -53,4 +56,24 @@ export function awaken(state: GameState): boolean {
 
 export function digestMult(gluttonyLevel: Decimal): Decimal {
   return D(DIGEST_GLOBAL_MULT).pow(gluttonyLevel);
+}
+
+export function canFeedingFrenzy(state: GameState): boolean {
+  return state.hunger >= state.hungerMax;
+}
+
+/** Full Phase 2–4 reset; banks Sin Essence and ratchets Devourer Rank. Returns gain. */
+export function feedingFrenzy(state: GameState): Decimal {
+  if (!canFeedingFrenzy(state)) return ZERO;
+
+  const gain = sinEssenceGain(state.souls, hungerRatio(state));
+
+  resetRun(state); // souls, stats, frenzyBought, current, totalKills, zone, maxZone, hunger
+  state.gluttonyLevel = ZERO;
+  state.awakenings = ZERO;
+  state.greed.bloodCharge = ZERO; // form is kept (SPEC §4)
+
+  state.sinEssence = state.sinEssence.add(gain);
+  updateDevourerRank(state);
+  return gain;
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { defaultState } from "../src/state/store";
-import { D } from "../src/engine/decimal";
+import { D, ZERO } from "../src/engine/decimal";
 import { nextObjective } from "../src/ui/nudge";
 
 describe("nextObjective", () => {
@@ -24,5 +24,15 @@ describe("nextObjective", () => {
     s.maxZone = 2;
     s.gluttonyLevel = D(1);
     expect(nextObjective(s)).toBeNull();
+  });
+});
+
+describe("frenzy objective nudge", () => {
+  it("nudges to Feeding Frenzy when gorged and not yet prestiged", () => {
+    const state = defaultState();
+    state.totalKills = D(5);
+    state.hunger = state.hungerMax;
+    state.sinEssence = ZERO;
+    expect(nextObjective(state)).toContain("Frenzy");
   });
 });

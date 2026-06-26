@@ -5,6 +5,7 @@ import { startLoop } from "./loop";
 import { tickCombat } from "./combat";
 import { tickGreed } from "./greed";
 import { tickHunger } from "./hunger";
+import { tickAutobuyers } from "./autobuyers";
 
 /** live, mutable game state. loop mutates directly (fast, no React churn). */
 export const game: { state: GameState; ticks: number } = {
@@ -19,6 +20,7 @@ export function tick(deltaSec: number): void {
   tickHunger(game.state, deltaSec);
   tickGreed(game.state, deltaSec);
   tickCombat(game.state, deltaSec);
+  tickAutobuyers(game.state);
 
   sinceSaveSec += deltaSec;
   if (sinceSaveSec >= game.state.settings.autosaveSec) {
