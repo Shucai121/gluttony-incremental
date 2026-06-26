@@ -11,6 +11,13 @@ import {
   essenceUpgradeCost,
   essenceUpgradeLevel,
 } from "../engine/essenceShop";
+import { AUTOBUYERS } from "../content/autobuyers";
+import {
+  canUnlockAutobuyer,
+  isAutobuyerActive,
+  setAutobuyerEnabled,
+  unlockAutobuyer,
+} from "../engine/autobuyers";
 import { Tooltip } from "./Tooltip";
 
 export function FrenzyPanel() {
@@ -45,6 +52,7 @@ export function FrenzyPanel() {
         </button>
       </Tooltip>
       <EssenceShop />
+      <Instincts />
     </section>
   );
 }
@@ -70,6 +78,41 @@ function EssenceShop() {
           </button>
         </div>
       ))}
+    </div>
+  );
+}
+
+function Instincts() {
+  const { state } = game;
+  return (
+    <div className="subpanel">
+      <Tooltip id="instincts">
+        <h3 className="panel__subtitle">Greed's Instincts</h3>
+      </Tooltip>
+      {AUTOBUYERS.map((def) => {
+        const owned = state.autobuyers[def.id]?.unlocked;
+        return (
+          <div className="row" key={def.id}>
+            <span className="muted">{def.name}</span>
+            {owned ? (
+              <button
+                className="btn"
+                onClick={() => setAutobuyerEnabled(state, def.id, !isAutobuyerActive(state, def.id))}
+              >
+                {isAutobuyerActive(state, def.id) ? "On" : "Off"}
+              </button>
+            ) : (
+              <button
+                className="btn"
+                disabled={!canUnlockAutobuyer(state, def.id)}
+                onClick={() => unlockAutobuyer(state, def.id)}
+              >
+                {format(def.unlockCost)}
+              </button>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
