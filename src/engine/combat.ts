@@ -11,6 +11,8 @@ import { essenceAbsorptionMult, essenceShopMult } from "./essenceShop";
 import { dropSkill, skillMult } from "./skills";
 import { activeModifiers } from "./modifiers";
 import { sinTreeMult } from "./sinTree";
+import { perkMult } from "./perks";
+import { achievementMult } from "./achievements";
 
 export interface CombatReadout {
   dps: Decimal;
@@ -27,7 +29,9 @@ export function computeGlobalMult(state: GameState): Decimal {
   return digestMult(state.gluttonyLevel)
     .mul(rankMult(state))
     .mul(essenceShopMult(state))
-    .mul(sinTreeMult(state));
+    .mul(sinTreeMult(state))
+    .mul(perkMult(state))
+    .mul(achievementMult(state));
 }
 
 export function computeDps(state: GameState): Decimal {

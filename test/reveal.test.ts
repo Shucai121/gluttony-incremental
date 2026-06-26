@@ -115,3 +115,38 @@ describe("phase 7 panel reveal", () => {
     expect(isRevealed("sintree", state)).toBe(true);
   });
 });
+
+describe("phase 8 panel reveal", () => {
+  it("hides transcendence until the Mortal Sin milestone or a prior transcend", () => {
+    const state = defaultState();
+    expect(isRevealed("transcendence", state)).toBe(false);
+    state.mortalSins = D(1);
+    expect(isRevealed("transcendence", state)).toBe(false);
+    state.mortalSins = D(2);
+    expect(isRevealed("transcendence", state)).toBe(true);
+  });
+
+  it("reveals transcendence after a transcend even with Mortal Sins reset", () => {
+    const state = defaultState();
+    state.mortalSins = ZERO;
+    state.transcendences = D(1);
+    expect(isRevealed("transcendence", state)).toBe(true);
+  });
+
+  it("reveals perks once Divinity is held", () => {
+    const state = defaultState();
+    expect(isRevealed("perks", state)).toBe(false);
+    state.divinity = D(1);
+    expect(isRevealed("perks", state)).toBe(true);
+  });
+
+  it("reveals achievements and titles only once something is unlocked", () => {
+    const state = defaultState();
+    expect(isRevealed("achievements", state)).toBe(false);
+    expect(isRevealed("titles", state)).toBe(false);
+    state.achievements = { "first-digest": true };
+    state.titles = { unlocked: ["mad-glutton"], active: null };
+    expect(isRevealed("achievements", state)).toBe(true);
+    expect(isRevealed("titles", state)).toBe(true);
+  });
+});

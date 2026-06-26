@@ -18,6 +18,10 @@ import { AppraisalPanel } from "./AppraisalPanel";
 import { SinTrialPanel } from "./SinTrialPanel";
 import { MortalSinPanel } from "./MortalSinPanel";
 import { SinTreePanel } from "./SinTreePanel";
+import { TranscendencePanel } from "./TranscendencePanel";
+import { DomainPerkPanel } from "./DomainPerkPanel";
+import { AchievementsPanel } from "./AchievementsPanel";
+import { TitlesPanel } from "./TitlesPanel";
 import { WelcomeModal } from "./WelcomeModal";
 import { ObjectiveNudge } from "./ObjectiveNudge";
 import { ToastHost } from "./SkillToast";
@@ -35,6 +39,10 @@ const PANEL_COMPONENTS: Record<Panel, () => JSX.Element> = {
   trials: SinTrialPanel,
   mortalsin: MortalSinPanel,
   sintree: SinTreePanel,
+  transcendence: TranscendencePanel,
+  perks: DomainPerkPanel,
+  achievements: AchievementsPanel,
+  titles: TitlesPanel,
 };
 
 export function AppShell() {

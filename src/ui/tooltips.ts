@@ -44,6 +44,11 @@ export const TOOLTIPS: Record<string, TooltipCopy> = {
   "mortal-sin": { title: "Mortal Sin", body: "At Devourer Rank S, awaken as a Mortal Sin: reset Phases 2–5 for Sins. Skills, the sin tree, and instincts persist." },
   sins: { title: "Sins", body: "The deepest prestige currency, earned by becoming a Mortal Sin. Spend it on the second-personality tree." },
   "sin-tree": { title: "The Other Voice", body: "A second personality wakes within Gluttony. Spend Sins on one of two mutually-exclusive paths — Restraint or Indulgence." },
+  transcendence: { title: "Transcendence", body: "After enough Mortal Sins, reset EVERYTHING for Divinity. Perks, achievements, and titles persist forever." },
+  divinity: { title: "Divinity", body: "The meta-currency of God's Domain. Spend it on permanent Domain Perks that empower every future run." },
+  "domain-perks": { title: "Domain Perks", body: "Permanent multipliers bought with Divinity. They survive every reset — the payoff for transcending." },
+  achievements: { title: "Achievements", body: "Milestones across every layer. Each unlocked deed grants a small permanent multiplier to all gains." },
+  titles: { title: "Titles", body: "Cosmetic honours earned along the way, from Mad Glutton to God. Wear the one that suits you." },
 };
 
 export function getTooltip(id: string): TooltipCopy | null {
