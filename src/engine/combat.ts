@@ -10,6 +10,7 @@ import { rankMult } from "./ranks";
 import { essenceAbsorptionMult, essenceShopMult } from "./essenceShop";
 import { dropSkill, skillMult } from "./skills";
 import { activeModifiers } from "./modifiers";
+import { sinTreeMult } from "./sinTree";
 
 export interface CombatReadout {
   dps: Decimal;
@@ -25,7 +26,8 @@ export function currentHungerRatio(state: GameState): number {
 export function computeGlobalMult(state: GameState): Decimal {
   return digestMult(state.gluttonyLevel)
     .mul(rankMult(state))
-    .mul(essenceShopMult(state));
+    .mul(essenceShopMult(state))
+    .mul(sinTreeMult(state));
 }
 
 export function computeDps(state: GameState): Decimal {
