@@ -4,6 +4,13 @@ import { sinEssenceGain } from "../engine/prestige";
 import { canFeedingFrenzy, feedingFrenzy } from "../engine/reset";
 import { rankMult, rankName } from "../engine/ranks";
 import { hungerRatio } from "../engine/hunger";
+import { ESSENCE_UPGRADES } from "../content/essenceShop";
+import {
+  buyEssenceUpgrade,
+  canBuyEssenceUpgrade,
+  essenceUpgradeCost,
+  essenceUpgradeLevel,
+} from "../engine/essenceShop";
 import { Tooltip } from "./Tooltip";
 
 export function FrenzyPanel() {
@@ -37,6 +44,32 @@ export function FrenzyPanel() {
           Feeding Frenzy
         </button>
       </Tooltip>
+      <EssenceShop />
     </section>
+  );
+}
+
+function EssenceShop() {
+  const { state } = game;
+  return (
+    <div className="subpanel">
+      <Tooltip id="essence-shop">
+        <h3 className="panel__subtitle">Sin Essence Shop</h3>
+      </Tooltip>
+      {ESSENCE_UPGRADES.map((upgrade) => (
+        <div className="row" key={upgrade.id}>
+          <span className="muted">
+            {upgrade.name} · Lv {essenceUpgradeLevel(state, upgrade.id)}
+          </span>
+          <button
+            className="btn"
+            disabled={!canBuyEssenceUpgrade(state, upgrade.id)}
+            onClick={() => buyEssenceUpgrade(state, upgrade.id)}
+          >
+            {format(essenceUpgradeCost(state, upgrade.id))}
+          </button>
+        </div>
+      ))}
+    </div>
   );
 }

@@ -27,6 +27,7 @@ export const TOOLTIPS: Record<string, TooltipCopy> = {
   "feeding-frenzy": { title: "Feeding Frenzy", body: "At maximum Hunger, Gluttony devours everything — your run resets for Sin Essence." },
   "sin-essence": { title: "Sin Essence", body: "The residue of a devoured run. Spend it to raise your Rank, buy upgrades, and unlock instincts." },
   "devourer-rank": { title: "Devourer Rank", body: "Rises with total Sin Essence (E→S). Each rank multiplies all damage and souls." },
+  "essence-shop": { title: "Sin Essence Shop", body: "Permanent upgrades bought with Sin Essence. They persist through every Feeding Frenzy." },
 };
 
 export function getTooltip(id: string): TooltipCopy | null {
