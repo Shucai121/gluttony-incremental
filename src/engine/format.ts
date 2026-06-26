@@ -2,10 +2,22 @@ import { Decimal, D } from "./decimal";
 
 export type Notation = "standard" | "scientific" | "engineering";
 
+// The active display notation. `format`'s default reads this so every existing call site
+// respects the player's setting without churn. Settings panel + load keep it in sync.
+let currentNotation: Notation = "scientific";
+
+export function setNotation(notation: Notation): void {
+  currentNotation = notation;
+}
+
+export function getNotation(): Notation {
+  return currentNotation;
+}
+
 // Uses break_eternity's `.mantissa`/`.exponent`, which are well-defined for normal
 // magnitudes. Beyond that (layer 2+, where the exponent itself is astronomical) we
 // defer to the library's native toString, which renders proper tower notation.
-export function format(value: Decimal, notation: Notation = "scientific", places = 2): string {
+export function format(value: Decimal, notation: Notation = currentNotation, places = 2): string {
   if (value.eq(0)) return "0";
   if (value.lt(0)) return "-" + format(value.neg(), notation, places);
 

@@ -22,6 +22,7 @@ import { TranscendencePanel } from "./TranscendencePanel";
 import { DomainPerkPanel } from "./DomainPerkPanel";
 import { AchievementsPanel } from "./AchievementsPanel";
 import { TitlesPanel } from "./TitlesPanel";
+import { SettingsPanel } from "./SettingsPanel";
 import { WelcomeModal } from "./WelcomeModal";
 import { ObjectiveNudge } from "./ObjectiveNudge";
 import { ToastHost } from "./SkillToast";
@@ -45,6 +46,7 @@ const PANEL_COMPONENTS: Record<Panel, () => JSX.Element> = {
   perks: DomainPerkPanel,
   achievements: AchievementsPanel,
   titles: TitlesPanel,
+  settings: SettingsPanel,
 };
 
 export function AppShell() {

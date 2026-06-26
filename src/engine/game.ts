@@ -12,12 +12,16 @@ import { checkTitles } from "./titles";
 import { achievementById } from "../content/achievements";
 import { titleById } from "../content/titles";
 import { emit } from "./events";
+import { setNotation } from "./format";
 
 /** live, mutable game state. loop mutates directly (fast, no React churn). */
 export const game: { state: GameState; ticks: number } = {
   state: deepMerge(defaultState(), migrate(loadRaw() ?? {})),
   ticks: 0,
 };
+
+// Apply the saved display notation at boot.
+setNotation(game.state.settings.notation);
 
 let sinceSaveSec = 0;
 
