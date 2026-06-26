@@ -65,3 +65,32 @@ describe("save round-trip Phase 8 meta layer", () => {
     expect(roundTripped.titles).toEqual({ unlocked: ["mad-glutton", "god"], active: "god" });
   });
 });
+
+describe("save robustness — ancient/minimal save loads fully", () => {
+  it("deep-merges a near-empty save into a complete, current state with no missing fields", () => {
+    // A save from the very first version that only ever knew about souls.
+    const ancient = { version: 1, souls: { __dec: "1234" } };
+    const loaded = deepMerge(defaultState(), migrate(decode(ancient)));
+
+    // It does not crash, and every current-layer field is present with a sane default.
+    expect(loaded.version).toBe(2);
+    expect(loaded.souls.eq(1234)).toBe(true);
+    expect(loaded.stats.STR.value.gt(0)).toBe(true);
+    expect(loaded.devourerRank).toBe(0);
+    expect(loaded.sins.eq(0)).toBe(true);
+    expect(loaded.divinity.eq(0)).toBe(true);
+    expect(loaded.transcendences.eq(0)).toBe(true);
+    expect(loaded.perks).toEqual({});
+    expect(loaded.achievements).toEqual({});
+    expect(loaded.titles).toEqual({ unlocked: [], active: null });
+    expect(loaded.settings.notation).toBe("scientific");
+    expect(typeof loaded.settings.autosaveSec).toBe("number");
+  });
+
+  it("falls back to a fresh state for an unknown future version instead of crashing", () => {
+    const future = migrate({ version: 999 });
+    const loaded = deepMerge(defaultState(), future);
+    expect(loaded.souls.eq(0)).toBe(true);
+    expect(loaded.titles).toEqual({ unlocked: [], active: null });
+  });
+});
