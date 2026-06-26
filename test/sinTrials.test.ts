@@ -12,6 +12,7 @@ import {
   isTrialCleared,
 } from "../src/engine/sinTrial";
 import { skillLevel } from "../src/engine/skills";
+import { game, tick } from "../src/engine/game";
 
 describe("sin content", () => {
   it("defines 7 sins whose rewards all resolve to real skills", () => {
@@ -71,5 +72,16 @@ describe("sin trial lifecycle", () => {
     exitTrial(state);
     expect(state.activeTrial).toBeNull();
     expect(isTrialCleared(state, "sloth")).toBe(false);
+  });
+});
+
+describe("the game loop resolves a cleared trial", () => {
+  it("a tick clears the active trial once the kill goal is met", () => {
+    enterTrial(game.state, "wrath");
+    game.state.totalKills = sinById("wrath")!.clearKills;
+    tick(0.05);
+    expect(game.state.activeTrial).toBeNull();
+    expect(isTrialCleared(game.state, "wrath")).toBe(true);
+    expect(skillLevel(game.state, "wrath-ember")).toBeGreaterThan(0);
   });
 });
