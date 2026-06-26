@@ -1,6 +1,7 @@
 import { LOADOUT_SIZE, skillById } from "../content/skills";
 import { GameState } from "../state/types";
 import { Decimal, ONE } from "./decimal";
+import { emit } from "./events";
 
 export function skillLevel(state: GameState, id: string): number {
   return state.skills[id]?.level ?? 0;
@@ -16,12 +17,21 @@ export function equippedCount(state: GameState): number {
   return n;
 }
 
-/** Devour-drop a skill: first time owns it at level 1; subsequent drops level it up. */
-export function dropSkill(state: GameState, id: string): void {
-  if (!skillById(id)) return;
+/**
+ * Devour-drop a skill: first time owns it at level 1; subsequent drops level it up.
+ * Announces a `skill-gained` event only on first acquisition. `silent` suppresses the
+ * announcement (the Sin Trial reward emits its own `sin-skill` event instead).
+ */
+export function dropSkill(state: GameState, id: string, opts?: { silent?: boolean }): void {
+  const def = skillById(id);
+  if (!def) return;
   const owned = state.skills[id];
-  if (owned) owned.level += 1;
-  else state.skills[id] = { level: 1, equipped: false };
+  if (owned) {
+    owned.level += 1;
+  } else {
+    state.skills[id] = { level: 1, equipped: false };
+    if (!opts?.silent) emit({ type: "skill-gained", name: def.name });
+  }
 }
 
 export function equipSkill(state: GameState, id: string): boolean {

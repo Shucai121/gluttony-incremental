@@ -132,3 +132,67 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 
 .reveal { animation: reveal-in 0.4s ease-out; }
 @keyframes reveal-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* --- Phase 9: [Appraisal] notification feed --- */
+.appraisal-feed {
+  position: fixed;
+  left: 18px;
+  bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 90;
+  max-width: min(340px, 60vw);
+}
+.appraisal-card {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--ember);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: var(--glow);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: appraisal-in 0.3s ease-out;
+}
+.appraisal-card__tag { font-size: 11px; letter-spacing: 1px; color: var(--ember); text-transform: uppercase; }
+.appraisal-card__text { font-size: 13px; line-height: 1.4; }
+@keyframes appraisal-in { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
+
+/* --- Phase 9: Hunger danger pulse --- */
+.meter--danger { animation: hunger-pulse 0.9s ease-in-out infinite; }
+@keyframes hunger-pulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(226, 58, 78, 0); }
+  50% { box-shadow: 0 0 14px rgba(226, 58, 78, 0.6); }
+}
+
+/* --- Phase 9: Feeding Frenzy / prestige flash --- */
+.frenzy-flash {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 95;
+  background: radial-gradient(circle at center, rgba(255, 90, 60, 0.35), rgba(179, 18, 44, 0) 65%);
+  animation: frenzy-flash 0.6s ease-out forwards;
+}
+@keyframes frenzy-flash { from { opacity: 1; } to { opacity: 0; } }
+.app-shell--flash { animation: frenzy-shake 0.4s ease-out; }
+@keyframes frenzy-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* --- Phase 9: Status Window character sheet --- */
+.statsheet { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px 18px; width: 100%; margin: 6px 0; }
+.statsheet__row { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+.statsheet__sub { color: var(--muted); font-size: 11px; }
+.badge {
+  display: inline-block;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 1px 8px;
+  color: var(--ember);
+  font-size: 12px;
+}

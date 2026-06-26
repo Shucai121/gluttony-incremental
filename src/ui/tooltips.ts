@@ -49,6 +49,7 @@ export const TOOLTIPS: Record<string, TooltipCopy> = {
   "domain-perks": { title: "Domain Perks", body: "Permanent multipliers bought with Divinity. They survive every reset — the payoff for transcending." },
   achievements: { title: "Achievements", body: "Milestones across every layer. Each unlocked deed grants a small permanent multiplier to all gains." },
   titles: { title: "Titles", body: "Cosmetic honours earned along the way, from Mad Glutton to God. Wear the one that suits you." },
+  settings: { title: "Settings", body: "Number notation, autosave interval, offline progress, and a full hard reset." },
 };
 
 export function getTooltip(id: string): TooltipCopy | null {

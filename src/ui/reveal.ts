@@ -20,7 +20,8 @@ export type Panel =
   | "transcendence"
   | "perks"
   | "achievements"
-  | "titles";
+  | "titles"
+  | "settings";
 
 export const PANELS: readonly Panel[] = [
   "foe",
@@ -39,6 +40,7 @@ export const PANELS: readonly Panel[] = [
   "perks",
   "achievements",
   "titles",
+  "settings",
 ];
 
 // Reads only monotonic state (totalKills) so panel never un-reveals after souls are spent.
@@ -74,6 +76,8 @@ export function isRevealed(panel: Panel, state: GameState): boolean {
       return Object.keys(state.achievements).length > 0;
     case "titles":
       return state.titles.unlocked.length > 0;
+    case "settings":
+      return true;
     default:
       return false;
   }
@@ -96,4 +100,5 @@ export const REVEAL_COPY: Record<Panel, string> = {
   perks: "『 Divinity pools in your hands. Reshape what every run becomes. 』",
   achievements: "『 Your deeds are carved into you. They make you stronger. 』",
   titles: "『 The world has a name for what you are now. 』",
+  settings: "",
 };

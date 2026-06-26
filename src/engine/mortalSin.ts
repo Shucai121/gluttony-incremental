@@ -2,6 +2,8 @@ import { MORTAL_SIN_RANK } from "../content/mortalSin";
 import { GameState } from "../state/types";
 import { Decimal, ONE, ZERO } from "./decimal";
 import { resetRun } from "./reset";
+import { emit } from "./events";
+import { format } from "./format";
 
 export function canMortalSin(state: GameState): boolean {
   return state.devourerRank >= MORTAL_SIN_RANK;
@@ -32,5 +34,6 @@ export function mortalSinAwaken(state: GameState): Decimal {
 
   state.sins = state.sins.add(gain);
   state.mortalSins = state.mortalSins.add(ONE);
+  emit({ type: "prestige", layer: "mortal-sin", gain: format(gain) });
   return gain;
 }

@@ -4,8 +4,10 @@ import { GameState, STAT_ORDER } from "../state/types";
 import { defaultState } from "../state/store";
 import { Decimal, D, ONE, ZERO } from "./decimal";
 import { sinEssenceGain } from "./prestige";
-import { updateDevourerRank } from "./ranks";
+import { rankName, updateDevourerRank } from "./ranks";
 import { hungerRatio } from "./hunger";
+import { emit } from "./events";
+import { format } from "./format";
 
 function bestStatValue(state: GameState): Decimal {
   let best = ZERO;
@@ -37,6 +39,7 @@ export function digest(state: GameState): boolean {
   const nextLevel = state.gluttonyLevel.add(ONE);
   resetRun(state);
   state.gluttonyLevel = nextLevel;
+  emit({ type: "prestige", layer: "digest" });
   return true;
 }
 
@@ -51,6 +54,7 @@ export function awaken(state: GameState): boolean {
   resetRun(state);
   state.gluttonyLevel = ZERO;
   state.awakenings = nextAwakenings;
+  emit({ type: "prestige", layer: "awaken" });
   return true;
 }
 
@@ -67,6 +71,7 @@ export function feedingFrenzy(state: GameState): Decimal {
   if (!canFeedingFrenzy(state)) return ZERO;
 
   const gain = sinEssenceGain(state.souls, hungerRatio(state));
+  const rankBefore = state.devourerRank;
 
   resetRun(state); // souls, stats, frenzyBought, current, totalKills, zone, maxZone, hunger
   state.gluttonyLevel = ZERO;
@@ -75,5 +80,8 @@ export function feedingFrenzy(state: GameState): Decimal {
 
   state.sinEssence = state.sinEssence.add(gain);
   updateDevourerRank(state);
+
+  emit({ type: "prestige", layer: "frenzy", gain: format(gain) });
+  if (state.devourerRank > rankBefore) emit({ type: "rank-up", rank: rankName(state) });
   return gain;
 }
