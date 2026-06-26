@@ -8,6 +8,7 @@ import { hungerRatio } from "./hunger";
 import { digestMult } from "./reset";
 import { rankMult } from "./ranks";
 import { essenceAbsorptionMult, essenceShopMult } from "./essenceShop";
+import { dropSkill, skillMult } from "./skills";
 
 export interface CombatReadout {
   dps: Decimal;
@@ -24,10 +25,6 @@ export function computeGlobalMult(state: GameState): Decimal {
   return digestMult(state.gluttonyLevel)
     .mul(rankMult(state))
     .mul(essenceShopMult(state));
-}
-
-function skillMult(_state: GameState): Decimal {
-  return ONE;
 }
 
 export function computeDps(state: GameState): Decimal {
@@ -79,6 +76,8 @@ export function killEnemy(state: GameState): void {
   for (const stat of STAT_ORDER) {
     state.stats[stat].value = state.stats[stat].value.add(current.stats[stat].mul(rate));
   }
+
+  if (current.skillDropId) dropSkill(state, current.skillDropId);
 
   state.hunger = Math.max(0, state.hunger - FEED_PER_KILL);
   state.totalKills = state.totalKills.add(ONE);

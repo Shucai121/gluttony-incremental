@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { D } from "../src/engine/decimal";
 import { defaultState } from "../src/state/store";
+import { spawnEnemy } from "../src/content/enemies";
+import { ZERO } from "../src/engine/decimal";
+import { computeDps, tickCombat } from "../src/engine/combat";
 import { LOADOUT_SIZE, skillById, skillDropForZone } from "../src/content/skills";
 import {
   dropSkill,
@@ -69,5 +72,28 @@ describe("skill engine", () => {
     equipSkill(state, id);
     const def = skillById(id)!;
     expect(skillMult(state).eq(def.multPerLevel.pow(skillLevel(state, id)))).toBe(true);
+  });
+});
+
+describe("skills drop from combat and raise DPS when equipped", () => {
+  it("a kill in a drop zone grants that zone's skill", () => {
+    const state = defaultState();
+    state.stats.STR.value = D(1000);
+    state.current = spawnEnemy(0, ZERO);
+    const id = skillDropForZone(0)!;
+    expect(skillLevel(state, id)).toBe(0);
+    tickCombat(state, 1);
+    expect(state.totalKills.gt(0)).toBe(true);
+    expect(skillLevel(state, id)).toBeGreaterThan(0);
+  });
+
+  it("equipping a dropped skill raises computeDps", () => {
+    const state = defaultState();
+    state.stats.STR.value = D(100);
+    const id = skillDropForZone(0)!;
+    dropSkill(state, id);
+    const before = computeDps(state);
+    equipSkill(state, id);
+    expect(computeDps(state).gt(before)).toBe(true);
   });
 });
