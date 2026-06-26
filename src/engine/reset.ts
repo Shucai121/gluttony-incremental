@@ -15,7 +15,7 @@ function bestStatValue(state: GameState): Decimal {
   return best;
 }
 
-function resetRun(state: GameState): void {
+export function resetRun(state: GameState): void {
   const fresh = defaultState();
   state.souls = fresh.souls;
   state.stats = fresh.stats;

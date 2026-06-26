@@ -48,22 +48,13 @@ export const SKILLS: SkillDef[] = [
     dropZone: 3,
   },
   // Sin Skills — granted only by clearing Sin Trials (never drop in normal combat).
-  {
-    id: "wrath-ember",
-    name: "Wrath Ember",
-    description: "Wrath's gift: fury made flame. +40% damage per level.",
-    kind: "dps",
-    multPerLevel: D("1.4"),
-    dropZone: -1,
-  },
-  {
-    id: "gluttons-maw",
-    name: "Glutton's Maw",
-    description: "Gluttony's gift: the endless hunger. +50% damage per level.",
-    kind: "dps",
-    multPerLevel: D("1.5"),
-    dropZone: -1,
-  },
+  { id: "wrath-ember", name: "Wrath Ember", description: "Wrath's gift: fury made flame. +40% damage per level.", kind: "dps", multPerLevel: D("1.4"), dropZone: -1 },
+  { id: "sloth-shroud", name: "Sloth Shroud", description: "Sloth's gift: effortless ruin. +40% damage per level.", kind: "dps", multPerLevel: D("1.4"), dropZone: -1 },
+  { id: "lust-charm", name: "Lust Charm", description: "Lust's gift: irresistible hunger. +40% damage per level.", kind: "dps", multPerLevel: D("1.4"), dropZone: -1 },
+  { id: "pride-crown", name: "Pride Crown", description: "Pride's gift: the unbowed edge. +40% damage per level.", kind: "dps", multPerLevel: D("1.4"), dropZone: -1 },
+  { id: "envy-mirror", name: "Envy Mirror", description: "Envy's gift: steal what is theirs. +40% damage per level.", kind: "dps", multPerLevel: D("1.4"), dropZone: -1 },
+  { id: "greed-edge", name: "Greed Edge", description: "Greed's gift: the blade that wants. +40% damage per level.", kind: "dps", multPerLevel: D("1.4"), dropZone: -1 },
+  { id: "gluttons-maw", name: "Glutton's Maw", description: "Gluttony's gift: the endless hunger. +50% damage per level.", kind: "dps", multPerLevel: D("1.5"), dropZone: -1 },
 ];
 
 export function skillById(id: string): SkillDef | null {
