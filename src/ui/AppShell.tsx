@@ -25,6 +25,8 @@ import { TitlesPanel } from "./TitlesPanel";
 import { WelcomeModal } from "./WelcomeModal";
 import { ObjectiveNudge } from "./ObjectiveNudge";
 import { ToastHost } from "./SkillToast";
+import { Notifications } from "./Notifications";
+import { subscribe as subscribeEvents } from "../engine/events";
 
 const PANEL_COMPONENTS: Record<Panel, () => JSX.Element> = {
   foe: FoePanel,
@@ -51,6 +53,18 @@ export function AppShell() {
   const state = game.state;
   const [toasts, setToasts] = useState<string[]>([]);
   const toastedRef = useRef<Set<string>>(new Set());
+  const [flash, setFlash] = useState(false);
+
+  // A prestige reset flashes the screen — a CSS animation, not the 60fps tick.
+  useEffect(() => {
+    const unsub = subscribeEvents((e) => {
+      if (e.type === "prestige") {
+        setFlash(true);
+        window.setTimeout(() => setFlash(false), 600);
+      }
+    });
+    return unsub;
+  }, []);
 
   // The first time a panel clears its reveal threshold, fire a one-time toast
   // that lingers on its own timer, independent of the persisted seen-set
@@ -73,7 +87,8 @@ export function AppShell() {
   }, [pendingReveals.join(",")]);
 
   return (
-    <div className="app-shell">
+    <div className={"app-shell" + (flash ? " app-shell--flash" : "")}>
+      {flash && <div className="frenzy-flash" aria-hidden />}
       {!prefs.welcomeSeen && <WelcomeModal onBegin={prefs.dismissWelcome} />}
 
       <header className="resourcebar panel">
@@ -112,6 +127,7 @@ export function AppShell() {
       })}
 
       <ToastHost messages={toasts} />
+      <Notifications />
     </div>
   );
 }
