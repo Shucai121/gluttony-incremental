@@ -7,6 +7,7 @@ import {
   tickAutobuyers,
   unlockAutobuyer,
 } from "../src/engine/autobuyers";
+import { tick, game } from "../src/engine/game";
 
 describe("greed's instinct autobuyers", () => {
   it("is inert until unlocked", () => {
@@ -44,5 +45,18 @@ describe("greed's instinct autobuyers", () => {
     state.souls = D(1000);
     tickAutobuyers(state);
     expect(state.stats.STR.trained.eq(0)).toBe(true);
+  });
+});
+
+describe("autobuyers run from the game loop", () => {
+  it("a tick drives an unlocked auto-train", () => {
+    // game.state is the live singleton; set it up for this assertion.
+    game.state.sinEssence = D(3);
+    unlockAutobuyer(game.state, "auto-train");
+    game.state.souls = D(1000);
+    const before = game.state.stats.STR.trained;
+    tick(0.05);
+    expect(game.state.stats.STR.trained.gte(before)).toBe(true);
+    expect(game.state.stats.STR.trained.gt(0)).toBe(true);
   });
 });

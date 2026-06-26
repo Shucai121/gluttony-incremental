@@ -26,15 +26,20 @@ export function decode(v: any): any {
   return v;
 }
 
+// localStorage is browser-only; the engine also imports under node (tests, SSR).
+function storage(): Storage | null {
+  return typeof localStorage === "undefined" ? null : localStorage;
+}
+
 export function saveGame(state: unknown): void {
-  localStorage.setItem(KEY, JSON.stringify(encode(state)));
+  storage()?.setItem(KEY, JSON.stringify(encode(state)));
 }
 
 export function loadRaw(): any | null {
-  const s = localStorage.getItem(KEY);
+  const s = storage()?.getItem(KEY);
   return s ? decode(JSON.parse(s)) : null;
 }
 
 export function clearSave(): void {
-  localStorage.removeItem(KEY);
+  storage()?.removeItem(KEY);
 }
