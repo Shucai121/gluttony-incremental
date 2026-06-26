@@ -46,3 +46,22 @@ describe("save migration v1 -> v2 (Phase 7)", () => {
     expect(loaded.sinTree).toEqual({});
   });
 });
+
+describe("save round-trip Phase 8 meta layer", () => {
+  it("preserves divinity, transcendences, perks, achievements, and titles", () => {
+    const state = defaultState();
+    state.divinity = D("4.2e3");
+    state.transcendences = D(7);
+    state.perks = { "domain-power": true, "domain-eternity": true };
+    state.achievements = { "first-transcend": true };
+    state.titles = { unlocked: ["mad-glutton", "god"], active: "god" };
+
+    const roundTripped = deepMerge(defaultState(), migrate(decode(JSON.parse(JSON.stringify(encode(state))))));
+
+    expect(roundTripped.divinity.eq("4.2e3")).toBe(true);
+    expect(roundTripped.transcendences.eq(7)).toBe(true);
+    expect(roundTripped.perks).toEqual({ "domain-power": true, "domain-eternity": true });
+    expect(roundTripped.achievements).toEqual({ "first-transcend": true });
+    expect(roundTripped.titles).toEqual({ unlocked: ["mad-glutton", "god"], active: "god" });
+  });
+});
