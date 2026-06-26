@@ -8,6 +8,7 @@ import {
   essenceShopMult,
   essenceUpgradeCost,
 } from "../src/engine/essenceShop";
+import { absorbRate, computeGlobalMult } from "../src/engine/combat";
 
 describe("essence shop", () => {
   it("first level costs the base cost; multipliers default to x1", () => {
@@ -40,5 +41,27 @@ describe("essence shop", () => {
     state.essenceUpgrades = { "deep-absorption": 1 };
     expect(essenceUpgradeCost(state, "deep-absorption").eq(D(10).mul(5))).toBe(true);
     expect(essenceAbsorptionMult(state).eq(D("1.25"))).toBe(true);
+  });
+});
+
+describe("essence shop and rank fold into combat", () => {
+  it("rank multiplier folds into the global mult", () => {
+    const state = defaultState();
+    expect(computeGlobalMult(state).eq(1)).toBe(true); // rank E, no digests, no upgrades
+    state.devourerRank = 1; // x3
+    expect(computeGlobalMult(state).eq(3)).toBe(true);
+  });
+
+  it("global essence upgrade folds into the global mult", () => {
+    const state = defaultState();
+    state.essenceUpgrades = { "gluttonys-might": 1 };
+    expect(computeGlobalMult(state).eq(D("1.5"))).toBe(true);
+  });
+
+  it("absorption upgrade folds into absorbRate", () => {
+    const base = absorbRate(defaultState());
+    const state = defaultState();
+    state.essenceUpgrades = { "deep-absorption": 1 };
+    expect(absorbRate(state).eq(base.mul("1.25"))).toBe(true);
   });
 });

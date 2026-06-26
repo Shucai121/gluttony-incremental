@@ -6,6 +6,8 @@ import { Decimal, D, ONE, ZERO } from "./decimal";
 import { greedMult } from "./greed";
 import { hungerRatio } from "./hunger";
 import { digestMult } from "./reset";
+import { rankMult } from "./ranks";
+import { essenceAbsorptionMult, essenceShopMult } from "./essenceShop";
 
 export interface CombatReadout {
   dps: Decimal;
@@ -19,7 +21,9 @@ export function currentHungerRatio(state: GameState): number {
 }
 
 export function computeGlobalMult(state: GameState): Decimal {
-  return digestMult(state.gluttonyLevel);
+  return digestMult(state.gluttonyLevel)
+    .mul(rankMult(state))
+    .mul(essenceShopMult(state));
 }
 
 function skillMult(_state: GameState): Decimal {
@@ -48,7 +52,8 @@ export function computeDps(state: GameState): Decimal {
 export function absorbRate(state: GameState): Decimal {
   return D(BASE_ABSORB)
     .mul(D(ABSORB_AWAKENING_MULT).pow(state.awakenings))
-    .mul(ONE.add(state.stats.MND.value.div(MND_SCALE)));
+    .mul(ONE.add(state.stats.MND.value.div(MND_SCALE)))
+    .mul(essenceAbsorptionMult(state));
 }
 
 export function soulsPerKill(state: GameState): Decimal {
