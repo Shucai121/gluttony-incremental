@@ -2,6 +2,8 @@ import { TRANSCEND_MORTAL_SINS } from "../content/transcendence";
 import { GameState } from "../state/types";
 import { Decimal, D, ONE, ZERO } from "./decimal";
 import { resetRun } from "./reset";
+import { emit } from "./events";
+import { format } from "./format";
 
 export function canTranscend(state: GameState): boolean {
   return state.mortalSins.gte(TRANSCEND_MORTAL_SINS);
@@ -43,5 +45,6 @@ export function transcend(state: GameState): Decimal {
 
   state.divinity = state.divinity.add(gain);
   state.transcendences = state.transcendences.add(ONE);
+  emit({ type: "prestige", layer: "transcend", gain: format(gain) });
   return gain;
 }

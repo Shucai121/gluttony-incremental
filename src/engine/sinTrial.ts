@@ -1,7 +1,9 @@
 import { sinById } from "../content/sins";
+import { skillById } from "../content/skills";
 import { GameState } from "../state/types";
 import { resetRun } from "./reset";
 import { dropSkill } from "./skills";
+import { emit } from "./events";
 
 export function isTrialCleared(state: GameState, id: string): boolean {
   return state.sinTrials[id]?.cleared ?? false;
@@ -48,7 +50,10 @@ export function checkTrialClear(state: GameState): boolean {
   const firstClear = !entry.cleared;
   entry.cleared = true;
   state.sinTrials[id] = entry;
-  if (firstClear) dropSkill(state, sin.rewardSkillId);
+  if (firstClear) {
+    dropSkill(state, sin.rewardSkillId, { silent: true });
+    emit({ type: "sin-skill", name: skillById(sin.rewardSkillId)?.name ?? sin.name });
+  }
 
   exitTrial(state);
   return true;
