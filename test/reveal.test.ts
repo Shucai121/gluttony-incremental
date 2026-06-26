@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { defaultState } from "../src/state/store";
-import { D } from "../src/engine/decimal";
+import { D, ZERO } from "../src/engine/decimal";
 import { isRevealed, PANELS, REVEAL_COPY } from "../src/ui/reveal";
 
 describe("isRevealed", () => {
@@ -41,5 +41,27 @@ describe("isRevealed", () => {
     for (const p of PANELS) {
       expect(typeof REVEAL_COPY[p]).toBe("string");
     }
+  });
+});
+
+describe("frenzy panel reveal", () => {
+  it("hidden before hunger maxes and before any essence", () => {
+    const state = defaultState();
+    state.hunger = 0;
+    state.sinEssence = ZERO;
+    expect(isRevealed("frenzy", state)).toBe(false);
+  });
+
+  it("revealed exactly when hunger maxes", () => {
+    const state = defaultState();
+    state.hunger = state.hungerMax;
+    expect(isRevealed("frenzy", state)).toBe(true);
+  });
+
+  it("stays revealed after first frenzy even at zero hunger", () => {
+    const state = defaultState();
+    state.hunger = 0;
+    state.sinEssence = D(2);
+    expect(isRevealed("frenzy", state)).toBe(true);
   });
 });
