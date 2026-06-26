@@ -3,7 +3,7 @@ import { Decimal } from "./decimal";
 const KEY = "bog-incremental-save";
 
 // Walk the LIVE object first (so instanceof works regardless of Decimal.toJSON, which
-// break_infinity DOES define — a naive JSON.stringify replacer would never see a Decimal).
+// break_eternity DOES define — a naive JSON.stringify replacer would never see a Decimal).
 export function encode(v: any): any {
   if (v instanceof Decimal) return { __dec: v.toString() };
   if (Array.isArray(v)) return v.map(encode);

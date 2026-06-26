@@ -41,6 +41,9 @@ export const TOOLTIPS: Record<string, TooltipCopy> = {
   "sin-envy": { title: "Envy", body: "Training is forbidden. Reward: Envy Mirror." },
   "sin-greed": { title: "Greed", body: "Appraisal is sealed. Reward: Greed Edge." },
   "sin-gluttony": { title: "Gluttony", body: "Hunger races and damage falters. Reward: Glutton's Maw." },
+  "mortal-sin": { title: "Mortal Sin", body: "At Devourer Rank S, awaken as a Mortal Sin: reset Phases 2–5 for Sins. Skills, the sin tree, and instincts persist." },
+  sins: { title: "Sins", body: "The deepest prestige currency, earned by becoming a Mortal Sin. Spend it on the second-personality tree." },
+  "sin-tree": { title: "The Other Voice", body: "A second personality wakes within Gluttony. Spend Sins on one of two mutually-exclusive paths — Restraint or Indulgence." },
 };
 
 export function getTooltip(id: string): TooltipCopy | null {
