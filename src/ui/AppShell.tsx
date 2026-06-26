@@ -12,6 +12,7 @@ import { TrainingPanel } from "./TrainingPanel";
 import { ZonePanel } from "./ZonePanel";
 import { GluttonyPanel } from "./GluttonyPanel";
 import { GreedPanel } from "./GreedPanel";
+import { FrenzyPanel } from "./FrenzyPanel";
 import { WelcomeModal } from "./WelcomeModal";
 import { ObjectiveNudge } from "./ObjectiveNudge";
 import { ToastHost } from "./SkillToast";
@@ -23,6 +24,7 @@ const PANEL_COMPONENTS: Record<Panel, () => JSX.Element> = {
   zone: ZonePanel,
   gluttony: GluttonyPanel,
   greed: GreedPanel,
+  frenzy: FrenzyPanel,
 };
 
 export function AppShell() {
