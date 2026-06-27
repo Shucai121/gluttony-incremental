@@ -28,9 +28,11 @@ export function SkillLibraryPanel() {
           const equipped = isEquipped(state, id);
           return (
             <div className="row" key={id}>
-              <span className="muted">
-                {def.name} · Lv {skillLevel(state, id)}
-              </span>
+              <Tooltip title={`${def.name} · Lv ${skillLevel(state, id)}`} body={def.description}>
+                <span className="muted">
+                  {def.name} · Lv {skillLevel(state, id)}
+                </span>
+              </Tooltip>
               <button
                 className="btn"
                 disabled={!equipped && equippedCount(state) >= LOADOUT_SIZE}

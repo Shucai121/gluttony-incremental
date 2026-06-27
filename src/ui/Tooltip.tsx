@@ -1,8 +1,20 @@
 import type { ReactNode } from "react";
 import { getTooltip } from "./tooltips";
 
-export function Tooltip({ id, children }: { id: string; children: ReactNode }) {
-  const copy = getTooltip(id);
+// Pass `id` to look up shared copy from tooltips.ts, or `title`/`body` for inline
+// content (used by data-driven rows like skills that carry their own descriptions).
+export function Tooltip({
+  id,
+  title,
+  body,
+  children,
+}: {
+  id?: string;
+  title?: string;
+  body?: string;
+  children: ReactNode;
+}) {
+  const copy = title !== undefined ? { title, body: body ?? "" } : id ? getTooltip(id) : null;
   if (!copy) return <>{children}</>;
   return (
     <span className="tip" tabIndex={0}>

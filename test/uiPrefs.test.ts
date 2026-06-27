@@ -23,7 +23,7 @@ describe("uiPrefs parsing", () => {
   });
 
   it("round-trips through serialize", () => {
-    const prefs = { welcomeSeen: true, seenReveals: ["zone"], hintsSeen: ["a"] };
+    const prefs = { welcomeSeen: true, seenReveals: ["zone"], hintsSeen: ["a"], statsExpanded: true };
     expect(parseUiPrefs(serializeUiPrefs(prefs))).toEqual(prefs);
   });
 });

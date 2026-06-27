@@ -83,6 +83,14 @@ export function isRevealed(panel: Panel, state: GameState): boolean {
   }
 }
 
+// A panel that has appeared once must never vanish. Most reveal predicates read
+// monotonic state, but a few (frenzy's hunger == hungerMax) read oscillating state
+// and would otherwise re-trigger the entrance animation as the value crosses the
+// threshold. Latch on the persisted seen-set so a revealed panel stays revealed.
+export function shouldShowPanel(panel: Panel, state: GameState, seen: readonly string[]): boolean {
+  return isRevealed(panel, state) || seen.includes(panel);
+}
+
 export const REVEAL_COPY: Record<Panel, string> = {
   foe: "",
   status: "",

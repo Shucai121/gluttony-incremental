@@ -4,10 +4,11 @@ export interface UiPrefs {
   welcomeSeen: boolean;
   seenReveals: string[];
   hintsSeen: string[];
+  statsExpanded: boolean;
 }
 
 export function defaultUiPrefs(): UiPrefs {
-  return { welcomeSeen: false, seenReveals: [], hintsSeen: [] };
+  return { welcomeSeen: false, seenReveals: [], hintsSeen: [], statsExpanded: false };
 }
 
 function strings(value: unknown, fallback: string[]): string[] {
@@ -24,6 +25,7 @@ export function parseUiPrefs(raw: string | null): UiPrefs {
       welcomeSeen: typeof o.welcomeSeen === "boolean" ? o.welcomeSeen : base.welcomeSeen,
       seenReveals: strings(o.seenReveals, base.seenReveals),
       hintsSeen: strings(o.hintsSeen, base.hintsSeen),
+      statsExpanded: typeof o.statsExpanded === "boolean" ? o.statsExpanded : base.statsExpanded,
     };
   } catch {
     return base;

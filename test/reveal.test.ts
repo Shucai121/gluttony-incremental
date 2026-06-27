@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { defaultState } from "../src/state/store";
 import { D, ZERO } from "../src/engine/decimal";
-import { isRevealed, PANELS, REVEAL_COPY } from "../src/ui/reveal";
+import { isRevealed, shouldShowPanel, PANELS, REVEAL_COPY } from "../src/ui/reveal";
 
 describe("isRevealed", () => {
   it("always reveals foe and status on a fresh save", () => {
@@ -63,6 +63,19 @@ describe("frenzy panel reveal", () => {
     state.hunger = 0;
     state.sinEssence = D(2);
     expect(isRevealed("frenzy", state)).toBe(true);
+  });
+
+  it("does not flicker: once seen, stays shown even as hunger drops below max", () => {
+    const state = defaultState();
+    state.sinEssence = ZERO;
+    // Hunger maxes — panel reveals and is recorded as seen.
+    state.hunger = state.hungerMax;
+    expect(shouldShowPanel("frenzy", state, [])).toBe(true);
+    const seen = ["frenzy"];
+    // Hunger drains back down before the first frenzy; raw predicate would hide it.
+    state.hunger = 0;
+    expect(isRevealed("frenzy", state)).toBe(false);
+    expect(shouldShowPanel("frenzy", state, seen)).toBe(true);
   });
 });
 

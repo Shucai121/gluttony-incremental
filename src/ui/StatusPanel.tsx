@@ -9,9 +9,11 @@ import { titleById } from "../content/titles";
 import { STAT_ORDER } from "../state/types";
 import { HungerBar } from "./HungerBar";
 import { Tooltip } from "./Tooltip";
+import { useUiPrefs } from "./useUiPrefs";
 
 export function StatusPanel() {
   const { state } = game;
+  const prefs = useUiPrefs();
   const readout = combatReadout(state);
   const activeTitle = state.titles.active ? titleById(state.titles.active)?.name : null;
 
@@ -53,27 +55,37 @@ export function StatusPanel() {
         </div>
       </Tooltip>
 
-      <div className="statsheet">
-        {STAT_ORDER.map((stat) => {
-          const st = state.stats[stat];
-          const base = D(INITIAL_STATS[stat]);
-          const absorbed = st.value.sub(st.trained).sub(base).max(0);
-          return (
-            <Tooltip id={`stat-${stat}`} key={stat}>
-              <div className="statsheet__row">
-                <span className="muted">{stat}</span>
-                <span>
-                  {format(st.value)}
-                  <span className="statsheet__sub">
-                    {" "}
-                    ({format(st.trained)}t / {format(absorbed)}a)
+      <button
+        className="statsheet__toggle"
+        aria-expanded={prefs.statsExpanded}
+        onClick={() => prefs.setStatsExpanded(!prefs.statsExpanded)}
+      >
+        {prefs.statsExpanded ? "▾ Hide stats" : "▸ Show stats"}
+      </button>
+
+      {prefs.statsExpanded && (
+        <div className="statsheet">
+          {STAT_ORDER.map((stat) => {
+            const st = state.stats[stat];
+            const base = D(INITIAL_STATS[stat]);
+            const absorbed = st.value.sub(st.trained).sub(base).max(0);
+            return (
+              <Tooltip id={`stat-${stat}`} key={stat}>
+                <div className="statsheet__row">
+                  <span className="muted">{stat}</span>
+                  <span>
+                    {format(st.value)}
+                    <span className="statsheet__sub">
+                      {" "}
+                      ({format(st.trained)}t / {format(absorbed)}a)
+                    </span>
                   </span>
-                </span>
-              </div>
-            </Tooltip>
-          );
-        })}
-      </div>
+                </div>
+              </Tooltip>
+            );
+          })}
+        </div>
+      )}
 
       <Tooltip id="hunger">
         <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 4 }}>

@@ -1,5 +1,6 @@
 import { GameState, STAT_ORDER } from "../state/types";
 import { REVEAL } from "../content/ui";
+import { equippedCount } from "../engine/skills";
 
 // Returns the first unmet objective's skill-voice line, or null when none remain.
 export function nextObjective(state: GameState): string | null {
@@ -21,6 +22,9 @@ export function nextObjective(state: GameState): string | null {
   }
   if (state.gluttonyLevel.lt(1) && state.totalKills.gte(REVEAL.gluttonyKills)) {
     return "『 The skill strains to deepen. Digest. 』";
+  }
+  if (Object.keys(state.skills).length > 0 && equippedCount(state) === 0) {
+    return "『 A skill, devoured. Equip it to wield its edge. 』";
   }
   return null;
 }

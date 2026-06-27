@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRender } from "../state/store";
 import { game } from "../engine/game";
 import { format } from "../engine/format";
-import { isRevealed, PANELS, REVEAL_COPY, Panel } from "./reveal";
+import { isRevealed, shouldShowPanel, PANELS, REVEAL_COPY, Panel } from "./reveal";
 import { useUiPrefs } from "./useUiPrefs";
 import { Tooltip } from "./Tooltip";
 import { HungerBar } from "./HungerBar";
@@ -119,7 +119,7 @@ export function AppShell() {
       <ObjectiveNudge />
 
       {PANELS.map((p) => {
-        if (!isRevealed(p, state)) return null;
+        if (!shouldShowPanel(p, state, prefs.seenReveals)) return null;
         const Comp = PANEL_COMPONENTS[p];
         return (
           <div className="reveal" key={p}>
