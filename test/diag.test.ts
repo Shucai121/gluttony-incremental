@@ -5,7 +5,10 @@ import { stepEngine } from "../src/engine/step";
 import { computeDps } from "../src/engine/combat";
 import { format } from "../src/engine/format";
 // Manual balance-sim probe (50k ticks, ~5min). Skipped by default; run with RUN_DIAG=1 (npm run test:diag).
-describe.skipIf(process.env.RUN_DIAG !== "1")("diag", () => {
+// Read process via globalThis so this typechecks without @types/node (vite app has none).
+const RUN_DIAG = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env
+  ?.RUN_DIAG;
+describe.skipIf(RUN_DIAG !== "1")("diag", () => {
   it("logs", () => {
     const s = defaultState();
     for (const d of AUTOBUYERS) s.autobuyers[d.id] = { unlocked: true, enabled: true, priority: d.defaultPriority };
