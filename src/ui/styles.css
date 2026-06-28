@@ -33,8 +33,9 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
   align-items: center;
   justify-content: center;
 }
-.resource { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 96px; }
+.resource { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 96px; max-width: 100%; }
 .resource > .muted { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+.resource > :last-child { min-width: 0; max-width: 100%; overflow-wrap: anywhere; text-align: center; }
 
 .panel {
   position: relative;
@@ -53,7 +54,9 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
   font-size: 14px;
   text-transform: uppercase;
 }
-.row { display: flex; justify-content: space-between; gap: 10px; font-variant-numeric: tabular-nums; }
+.row { display: flex; justify-content: space-between; gap: 10px; min-width: 0; font-variant-numeric: tabular-nums; }
+/* Let long numeric values shrink and wrap instead of forcing horizontal overflow. */
+.row > :last-child { min-width: 0; overflow-wrap: anywhere; text-align: right; }
 .muted { color: var(--muted); }
 
 .btn {
@@ -101,10 +104,20 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
   z-index: 80;
   text-align: left;
 }
-.tip:hover .tip__pop, .tip:focus .tip__pop, .tip:focus-within .tip__pop {
+/* Focus drives the popup everywhere (keyboard + tap-to-show on touch). */
+.tip:focus .tip__pop, .tip:focus-within .tip__pop {
   opacity: 1;
   visibility: visible;
   transform: translate(-50%, 0) scale(1);
+}
+/* Hover only on devices that truly hover — avoids iOS "sticky :hover" leaving a popup
+   stuck open with no way to tap it away. */
+@media (hover: hover) {
+  .tip:hover .tip__pop {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0) scale(1);
+  }
 }
 .tip__title { margin: 0 0 4px; font-size: 12px; color: var(--accent); }
 .tip__body { margin: 0; font-size: 12px; line-height: 1.4; color: var(--muted); }
@@ -193,9 +206,12 @@ body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--
 }
 
 /* --- Phase 9: Status Window character sheet --- */
-.statsheet { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px 18px; width: 100%; margin: 6px 0; }
-.statsheet__row { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+.statsheet { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 18px; width: 100%; margin: 6px 0; }
+.statsheet__row { display: flex; justify-content: space-between; gap: 8px; min-width: 0; font-size: 13px; }
+.statsheet__row > :last-child { min-width: 0; overflow-wrap: anywhere; text-align: right; }
 .statsheet__sub { color: var(--muted); font-size: 11px; }
+/* On narrow screens a single column gives each stat (value + trained/absorbed) full width. */
+@media (max-width: 520px) { .statsheet { grid-template-columns: 1fr; } }
 .statsheet__toggle {
   align-self: flex-start;
   margin: 4px 0 2px;

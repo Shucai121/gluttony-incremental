@@ -23,3 +23,20 @@ describe("format notation setting", () => {
     expect(format(D("1.23e10"), "scientific")).toBe("1.23e10");
   });
 });
+
+describe("compact exponent for astronomical magnitudes", () => {
+  it("leaves moderate exponents in plain scientific", () => {
+    expect(format(D("1.23e50000"))).toBe("1.23e50000");
+  });
+
+  it("compacts the exponent itself once it grows past ~1e6", () => {
+    // 10^1,000,000 — the exponent is itself rendered in scientific (1.00e1.00e6) so the
+    // string can never grow without bound and overflow the layout.
+    expect(format(D("1e1000000"))).toBe("1.00e1.00e6");
+  });
+
+  it("compacts in engineering notation too", () => {
+    setNotation("engineering");
+    expect(format(D("1e1000002"))).toBe("1.00e1.00e6");
+  });
+});
